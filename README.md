@@ -29,6 +29,9 @@ Image processing is carried out by models of neural networks built with a transf
 
 ## License
 
+This project is licensed under the [MIT License](https://en.wikipedia.org/wiki/MIT_License) - 
+see the [LICENSE](https://github.com/otanadzetsotne/nn-image-similarity/blob/main/LICENSE) file for details.
+
 <div id="acknowledgments" />
 
 ## Acknowledgments

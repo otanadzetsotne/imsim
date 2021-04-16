@@ -2,6 +2,8 @@ import os
 
 
 def check_dir(dirs: list):
+    """ Creating directories if they are not exist """
+
     for dir_ in dirs:
         if not os.path.exists(dir_) or not os.path.isdir(dir_):
             os.mkdir(dir_)

@@ -4,7 +4,7 @@ from tensorflow.keras import models
 import config as c
 
 
-class _EncoderLoader:
+class _ModelLoader:
     """ For transporting a neural network to a working object of Encoder class"""
 
     def __init__(self, model):
@@ -27,8 +27,11 @@ class ModelEncoder:
     """ For data compression from (n, 768) shape vectors to (n, 256) shape """
 
     def __init__(self, model: str = 'basic'):
-        self.__model_loader = _EncoderLoader(model)
+        self.__model_loader = _ModelLoader(model)
 
     def predict(self, vectors: np.ndarray, *args, **kwargs) -> np.ndarray:
         """ Compress vectors of (n, 768) shape to (n, 256) shape """
         return self.__model_loader.get().predict(vectors, *args, **kwargs).reshape(1, -1)
+
+
+""" TODO: we have encoder loader and we need saver now """

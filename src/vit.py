@@ -2,13 +2,13 @@ import os
 import torch
 import pickle
 import numpy as np
-from PIL import Image
 from pytorch_pretrained_vit import ViT
 from pytorch_pretrained_vit.model import ViT as modelViT
 from torchvision import transforms
 from torchvision.transforms.transforms import Compose as transformCompose
 
 import config as c
+from src.datatypes import PILImage
 
 
 class _Identity(torch.nn.Module):
@@ -55,7 +55,7 @@ class _ModelLoader:
     def __download(self) -> modelViT:
         """ Download model from ViT library to local file storage """
 
-        model = ViT(self.__model_name, *self.__args, **self.__kwargs)
+        model = ViT(self.__model_name, pretrained=True, *self.__args, **self.__kwargs)
         with open(self.__model_path, 'wb') as f:
             pickle.dump(model, f)
 
@@ -68,11 +68,10 @@ class _ModelLoader:
 
 
 class ModelViT:
-    def __init__(self, model: str = 'B_16_imagenet1k', max_workers: int = 32, *args, **kwargs):
+    def __init__(self, model: str = 'B_16_imagenet1k', *args, **kwargs):
         self.__model_loader = _ModelLoader(model, *args, **kwargs)
-        self.__max_workers = max_workers
 
-    def predict(self, img: type(Image)) -> np.ndarray:
+    def predict(self, img: PILImage) -> np.ndarray:
         """ Predict """
         img = self.__transform()(img).unsqueeze(0)
         with torch.no_grad():

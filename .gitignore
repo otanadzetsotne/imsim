@@ -137,6 +137,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Test files
-test/
-model/
+# Custom
+tests/
+models/

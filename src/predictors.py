@@ -26,8 +26,8 @@ class PredictorYoloV5(PredictorAbstract):
     __model = ModelYoloV5()
 
     @classmethod
-    def predict(cls, images: Iterable[ImageData]) -> Iterable[ImageData]:
-        with ThreadPoolExecutor() as executor:
+    def predict(cls, images: Iterable[ImageData], processes: int = 1) -> Iterable[ImageData]:
+        with ThreadPoolExecutor(processes) as executor:
             images = executor.map(cls.__predict_image, images)
 
         return images
@@ -60,14 +60,11 @@ class PredictorEncoder(PredictorAbstract):
     __model = ModelEncoder()
 
     @classmethod
-    def predict(cls, images: Iterable[ImageData]) -> Iterable[ImageData]:
-        """ Compress ImageSegments vectors """
+    def predict(cls, images: Iterable[ImageData], processes: int = 1) -> Iterable[ImageData]:
+        with ThreadPoolExecutor(processes) as executor:
+            images = executor.map(cls.__predict_image, images)
 
-        """
-        In this case, keras encoder works pretty fast, so we don't need multithreading here,
-        cause threads are slowing down the script
-        """
-        return map(cls.__predict_image, images)
+        return images
 
     @classmethod
     def __predict_image(cls, image: ImageData) -> ImageData:
@@ -95,8 +92,8 @@ class PredictorVit(PredictorAbstract):
     __model = ModelViT()
 
     @classmethod
-    def predict(cls, images: Iterable[ImageData]) -> Iterable[ImageData]:
-        with ThreadPoolExecutor() as executor:
+    def predict(cls, images: Iterable[ImageData], processes: int = 1) -> Iterable[ImageData]:
+        with ThreadPoolExecutor(processes) as executor:
             images = executor.map(cls.__predict_image, images)
 
         return images

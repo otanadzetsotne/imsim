@@ -42,6 +42,8 @@ class _ModelLoader:
         if self.__model is None:
             self.__model = self.__load()
 
+        self.__model.eval()
+
         return self.__model
 
     def __load(self) -> modelViT:
@@ -55,7 +57,7 @@ class _ModelLoader:
     def __download(self) -> modelViT:
         """ Download model from ViT library to local file storage """
 
-        model = ViT(self.__model_name, pretrained=True, *self.__args, **self.__kwargs)
+        model = ViT(self.__model_name, pretrained=True, image_size=c.VIT_IMAGE_SIZE, *self.__args, **self.__kwargs)
         with open(self.__model_path, 'wb') as f:
             pickle.dump(model, f)
 
@@ -68,7 +70,7 @@ class _ModelLoader:
 
 
 class ModelViT:
-    def __init__(self, model: str = 'B_16_imagenet1k', *args, **kwargs):
+    def __init__(self, model: str = 'B_32_imagenet1k', *args, **kwargs):
         self.__model_loader = _ModelLoader(model, *args, **kwargs)
 
     def predict(self, img: PILImage) -> np.ndarray:
@@ -91,7 +93,7 @@ class ModelViT:
     def __transform() -> transformCompose:
         """ Get transform layer for neural network input """
         return transforms.Compose([
-            transforms.Resize((384, 384)),
+            transforms.Resize((c.VIT_IMAGE_SIZE, c.VIT_IMAGE_SIZE)),
             transforms.ToTensor(),
             transforms.Normalize(0.5, 0.5),
         ])

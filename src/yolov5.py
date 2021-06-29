@@ -1,8 +1,8 @@
 import os
 import torch
 import pandas as pd
-import config as c
 
+from src.config import Configs
 from src.datatypes import PILImage, Coordinates
 
 
@@ -12,7 +12,7 @@ class _ModelLoader:
 
     def __init__(self, model, *args, **kwargs):
         self.__model_name = model
-        self.__model_path = f'{c.path_model}/{self.__rep_name}/'
+        self.__model_path = f'{Configs.get("directories.models")}/{self.__rep_name}/'
         self.__model = None
 
         self.__rep_path = f'{self.__model_path}/{self.__rep_owner}_{self.__rep_name}_master'

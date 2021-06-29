@@ -7,7 +7,7 @@ from pytorch_pretrained_vit.model import ViT as modelViT
 from torchvision import transforms
 from torchvision.transforms.transforms import Compose as transformCompose
 
-import config as c
+from src.config import Configs
 from src.datatypes import PILImage
 
 
@@ -25,13 +25,10 @@ class _Identity(torch.nn.Module):
 class _ModelLoader:
     """ For transporting a neural network to a working object of Model class"""
 
-    def __init__(self, model, *args, **kwargs):
-        self.__model_name = model
-        self.__model_path = f'{c.path_model}/{model}.pickle'
+    def __init__(self):
+        self.__model_name = Configs.get('models.vit.name')
+        self.__model_path = f'{Configs.get("directories.models")}/{self.__model_name}.pickle'
         self.__model = None
-
-        self.__args = args
-        self.__kwargs = kwargs
 
     def get(self) -> modelViT:
         """ Get model from RAM, file storage or download from library """
@@ -57,7 +54,7 @@ class _ModelLoader:
     def __download(self) -> modelViT:
         """ Download model from ViT library to local file storage """
 
-        model = ViT(self.__model_name, pretrained=True, image_size=c.VIT_IMAGE_SIZE, *self.__args, **self.__kwargs)
+        model = ViT(Configs.get('models.vit'))
         with open(self.__model_path, 'wb') as f:
             pickle.dump(model, f)
 
@@ -70,8 +67,8 @@ class _ModelLoader:
 
 
 class ModelViT:
-    def __init__(self, model: str = 'B_32_imagenet1k', *args, **kwargs):
-        self.__model_loader = _ModelLoader(model, *args, **kwargs)
+    def __init__(self):
+        self.__model_loader = _ModelLoader()
 
     def predict(self, img: PILImage) -> np.ndarray:
         """ Predict """
@@ -92,8 +89,9 @@ class ModelViT:
     @staticmethod
     def __transform() -> transformCompose:
         """ Get transform layer for neural network input """
+        image_size = Configs.get('models.vit.image_size')
         return transforms.Compose([
-            transforms.Resize((c.VIT_IMAGE_SIZE, c.VIT_IMAGE_SIZE)),
+            transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),
             transforms.Normalize(0.5, 0.5),
         ])

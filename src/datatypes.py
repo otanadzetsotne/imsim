@@ -1,3 +1,5 @@
+from statistics import mean, harmonic_mean
+
 import numpy as np
 from PIL import Image
 from typing import Optional, NamedTuple
@@ -66,7 +68,7 @@ class ImageData(NamedTuple):
         output += f'{self.__class__}\n'
         output += f'path: {self.path}\n'
         output += f'segments: {len(self.segments)}\n'
-        output += f'err: {self.err.__repr__()}'
+        output += f'err: {self.err}\n'
 
         return output
 
@@ -83,16 +85,28 @@ class ImageData(NamedTuple):
 
         return [segment for segment in self.segments if segment.is_full][0]
 
-    @staticmethod
-    def __calculate_distance(segment_a: ImageSegment, segment_b: ImageSegment) -> float:
-        """ Calculate distance between segments """
-        """ TODO: this should be in another place """
-        
-        """ get center coordinates """
-        center_a = segment_a.coordinates.get_center()
-        center_b = segment_b.coordinates.get_center()
-        
-        """ calculate distance between center coordinates """
-        distance = (((center_a[0] - center_b[0]) ** 2) + ((center_a[1] - center_b[1]) ** 2)) ** .5
+    def __get_data(self) -> Optional[np.ndarray]:
+        # create segments data matrix
+        data = np.array([segment.data for segment in self.segments])
+        # transpose matrix for geometric_mean()
+        data = np.transpose(data)
 
-        return distance
+        return data
+
+    def get_data_mean(self) -> Optional[np.ndarray]:
+        """ Get segments data vector """
+
+        data = self.__get_data()
+        # create geometric mean vector
+        data = np.array([mean(vector.reshape(-1)) for vector in data])
+
+        return data
+
+    def get_data_mean_harmonic(self) -> Optional[np.ndarray]:
+        """ Get segments data vector """
+
+        data = self.__get_data()
+        # create geometric mean vector
+        data = np.array([harmonic_mean(vector) for vector in data])
+
+        return data

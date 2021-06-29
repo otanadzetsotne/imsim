@@ -1,15 +1,15 @@
 import numpy as np
 from tensorflow.keras import models
 
-import config as c
+from src.config import Configs
 
 
 class _ModelLoader:
     """ For transporting a neural network to a working object of Encoder class"""
 
-    def __init__(self, model):
-        self.__model_name = model
-        self.__model_path = f'{c.path_model}/{self.__model_name}/encoder'
+    def __init__(self):
+        self.__model_name = Configs.get('models.encoder.name')
+        self.__model_path = f'{Configs.get("directories.models")}/{self.__model_name}/encoder'
         self.__model = None
 
     def get(self):
@@ -26,8 +26,8 @@ class _ModelLoader:
 class ModelEncoder:
     """ For data compression from (n, 768) shape vectors to (n, 256) shape """
 
-    def __init__(self, model: str = 'basic'):
-        self.__model_loader = _ModelLoader(model)
+    def __init__(self):
+        self.__model_loader = _ModelLoader()
 
     def predict(self, vectors: np.ndarray, *args, **kwargs) -> np.ndarray:
         """ Compress vectors of (n, 768) shape to (n, 256) shape """

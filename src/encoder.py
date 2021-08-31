@@ -1,7 +1,7 @@
+import torch
 import numpy as np
-from tensorflow.keras import models
 
-from src.config import Configs
+from config import Configs
 
 
 class _ModelLoader:
@@ -9,18 +9,28 @@ class _ModelLoader:
 
     def __init__(self):
         self.__model_name = Configs.get('models.encoder.name')
-        self.__model_path = f'{Configs.get("directories.models")}/{self.__model_name}/encoder'
+        self.__model_path = f'{Configs.get("directories.models")}/{self.__model_name}.pickle'
         self.__model = None
 
     def get(self):
         """ Get encoder from RAM or local file storage """
+
         if self.__model is None:
             self.__model = self.__load()
+
+        # TODO:
+        # if torch.cuda.is_available():
+        #     self.__model.cuda()
+
+        self.__model.eval()
+
         return self.__model
 
     def __load(self):
         """  Load model from local file storage """
-        return models.load_model(self.__model_path)
+
+        self.__model = torch.load(self.__model_path)
+        return self.__model
 
 
 class ModelEncoder:
@@ -29,9 +39,18 @@ class ModelEncoder:
     def __init__(self):
         self.__model_loader = _ModelLoader()
 
-    def predict(self, vectors: np.ndarray, *args, **kwargs) -> np.ndarray:
+    def predict(self, vectors: np.ndarray) -> np.ndarray:
         """ Compress vectors of (n, 768) shape to (n, 256) shape """
-        return self.__model_loader.get().predict(vectors, *args, **kwargs).reshape(1, -1)
+
+        # TODO: check correctness
+        # TODO: add GPU usage
+
+        vectors = torch.Tensor(vectors)
+
+        answer = self.__model_loader.get()(vectors)
+        answer = answer.detach().numpy()
+
+        return answer
 
 
 """ TODO: we have encoder loader and we need saver now """

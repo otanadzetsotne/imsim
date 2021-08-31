@@ -1,13 +1,19 @@
 import os
-import torch
-import pickle
+
 import numpy as np
-from pytorch_pretrained_vit import ViT
-from pytorch_pretrained_vit.model import ViT as modelViT
+
+import torch
 from torchvision import transforms
 from torchvision.transforms.transforms import Compose as transformCompose
 
-from src.config import Configs
+from pytorch_pretrained_vit import ViT
+from pytorch_pretrained_vit.model import ViT as modelViT
+
+from config import (
+    MODEL_DIR,
+    MODEL_VIT_INPUT,
+    MODEL_VIT_NAME,
+)
 from src.datatypes import PILImage
 
 
@@ -25,9 +31,11 @@ class _Identity(torch.nn.Module):
 class _ModelLoader:
     """ For transporting a neural network to a working object of Model class"""
 
-    def __init__(self):
-        self.__model_name = Configs.get('models.vit.name')
-        self.__model_path = f'{Configs.get("directories.models")}/{self.__model_name}.pickle'
+    def __init__(self, name, image_size):
+        self.__model_name = name
+        self.__image_size = image_size
+
+        self.__model_path = f'{MODEL_DIR}/{self.__model_name}_{self.__image_size}.pickle'
         self.__model = None
 
     def get(self) -> modelViT:
@@ -39,6 +47,9 @@ class _ModelLoader:
         if self.__model is None:
             self.__model = self.__load()
 
+        if torch.cuda.is_available():
+            self.__model.cuda()
+
         self.__model.eval()
 
         return self.__model
@@ -46,17 +57,28 @@ class _ModelLoader:
     def __load(self) -> modelViT:
         """  Load model from local file storage """
 
-        with open(self.__model_path, 'rb') as f:
-            model = pickle.load(f)
+        # TODO: нужно проверить
+        model = torch.load(self.__model_path)
+
+        # with open(self.__model_path, 'rb') as f:
+        #     model = pickle.load(f)
 
         return model
 
     def __download(self) -> modelViT:
         """ Download model from ViT library to local file storage """
 
-        model = ViT(Configs.get('models.vit'))
-        with open(self.__model_path, 'wb') as f:
-            pickle.dump(model, f)
+        model = ViT(
+            name=self.__model_name,
+            image_size=self.__image_size,
+            pretrained=True,
+        )
+
+        # TODO: нужно проверить
+        torch.save(model, self.__model_path)
+
+        # with open(self.__model_path, 'wb') as f:
+        #     pickle.dump(model, f)
 
         return model
 
@@ -67,31 +89,50 @@ class _ModelLoader:
 
 
 class ModelViT:
+    __model_loader = None
+
     def __init__(self):
-        self.__model_loader = _ModelLoader()
+        self.__model_loader = _ModelLoader(MODEL_VIT_NAME, MODEL_VIT_INPUT)
+
+        # TODO: зачем вызывать модель заранее?
+        # self.__model_loader.get()
 
     def predict(self, img: PILImage) -> np.ndarray:
         """ Predict """
+
+        # Transform images to Torch tensors
         img = self.__transform()(img).unsqueeze(0)
+        # Throw tensors to GPU if available
+        img = img.cuda() if torch.cuda.is_available() else img
+
+        # With disabled gradient calculation
         with torch.no_grad():
-            return np.array(self.__predictor()(img)).reshape(1, -1)
+            # Make prediction
+            prediction = self.__predictor()(img)
+            prediction = prediction.cpu() if torch.cuda.is_available() else prediction
+            prediction = np.array(prediction).reshape(1, -1)
+
+            return prediction
 
     def __classifier(self) -> modelViT:
         """ Get ViT classifier network """
+
         return self.__model_loader.get()
 
     def __predictor(self) -> modelViT:
         """ Get ViT classifier network without classifier layer """
+
         classifier = self.__classifier()
         classifier.fc = _Identity()
+
         return classifier
 
     @staticmethod
     def __transform() -> transformCompose:
         """ Get transform layer for neural network input """
-        image_size = Configs.get('models.vit.image_size')
+
         return transforms.Compose([
-            transforms.Resize((image_size, image_size)),
+            transforms.Resize((MODEL_VIT_INPUT, MODEL_VIT_INPUT)),
             transforms.ToTensor(),
             transforms.Normalize(0.5, 0.5),
         ])

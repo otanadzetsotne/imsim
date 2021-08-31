@@ -8,18 +8,6 @@ from typing import Optional, NamedTuple
 PILImage = type(Image)
 
 
-class CoordinatesDot(NamedTuple):
-    x: float
-    y: float
-
-    def __repr__(self):
-        output = ''
-        output += f'x: {self.x}, '
-        output += f'y: {self.y}, '
-
-        return output
-
-
 class Coordinates(NamedTuple):
     x_min: float
     y_min: float
@@ -53,7 +41,12 @@ class ImageSegment(NamedTuple):
     is_full: bool = False
 
     def __repr__(self):
-        return f'{self.__class__} with coordinates: ({self.coordinates})'
+        output = ''
+        output += f'{self.__class__}\n'
+        output += f'coordinates: {self.coordinates}\n'
+        output += f'data: {self.data.shape}\n' if self.data is not None else f'err: {self.err}'
+        output += f'is_full: {self.is_full}'
+        return output
 
 
 class ImageData(NamedTuple):

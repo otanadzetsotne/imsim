@@ -1,3 +1,6 @@
+import io
+
+import numpy as np
 from PIL import Image
 from requests.models import Response
 
@@ -20,7 +23,10 @@ class ImageDataCreator:
             response.raise_for_status()
 
             """ create ImageSegment """
-            pil = Image.open(response.raw).convert('RGB')
+
+            img = io.BytesIO(response.content)
+            pil = Image.open(img).convert('RGB')
+
             coordinates = Coordinates(x_min=0, y_min=0, x_max=pil.size[0], y_max=pil.size[1])
             segment = ImageSegment(pil=pil, coordinates=coordinates, is_full=True)
 
@@ -58,18 +64,43 @@ class ImageDataCreator:
 class ImageDataHelper:
     @staticmethod
     def prune_segments(image: ImageData) -> ImageData:
-        segment_full = image.get_segment_full()
-        center_full = segment_full.coordinates.get_center()
-        allowable_distance = (center_full[0] // 2, center_full[1] // 2)
+        if image.err is None:
+            segment_full = image.get_segment_full()
 
-        segments_pruned = []
-        for segment in image.segments:
-            center = segment.coordinates.get_center()
+            center_full = segment_full.coordinates.get_center()
+            # allowable_distance = np.array([center_full[0] // 2, center_full[1] // 2])
 
-            is_valid = abs(center_full[0] - center[0]) < allowable_distance[0]
-            is_valid = abs(center_full[1] - center[1]) < allowable_distance[1] and is_valid
+            # segments_pruned = []
+            # pruned_scores = []
 
-            if is_valid:
-                segments_pruned.append(segment)
+            segments = []
+            scores = []
+            for segment in image.segments:
+                if segment.err is None:
+                    center = segment.coordinates.get_center()
 
-        return image._replace(segments=segments_pruned)
+                    # is_valid = abs(center_full[0] - center[0]) < allowable_distance[0]
+                    # is_valid = abs(center_full[1] - center[1]) < allowable_distance[1] and is_valid
+
+                    width, height = segment.pil.size
+                    segment_size = width * height
+
+                    distance_vector = [center[0] - center_full[0], center[1] - center_full[1]]
+                    segment_distance = np.linalg.norm(distance_vector)
+
+                    score = [segment_size, -segment_distance]
+                    score = sum(score / np.linalg.norm(score))
+
+                    segments.append(segment)
+                    scores.append(score)
+
+                    # if is_valid:
+                    #     segments_pruned.append(segment)
+                    #     pruned_scores.append(score)
+
+            segments_sorted = [element for _, element in sorted(zip(scores, segments), reverse=True)]
+            segments_best = segments_sorted[:3]  # 1 full segment and 2 best segments
+
+            image = image._replace(segments=segments_best)
+
+        return image

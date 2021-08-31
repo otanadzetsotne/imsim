@@ -17,7 +17,7 @@ class Configs:
     __configs = {
         # Project Directories
         'directories': {
-            'models': os.path.abspath('../models'),
+            'models': os.path.abspath('models') if os.path.exists('models') else os.path.abspath('models'),
             # Test Directories
             'test': os.path.abspath('../tests'),
             'test_images': os.path.abspath('../tests/data/images.txt'),
@@ -32,7 +32,7 @@ class Configs:
                 'pretrained': True,
             },
             'encoder': {
-                'name': 'base',
+                'name': 'encoder_deeper',
             },
             'yolov5': {
                 'name': 'yolov5s',
@@ -62,4 +62,11 @@ class Configs:
         return cls.__get(configs, search)
 
 
-check_directories(Configs.get('directories'))
+# check_directories(Configs.get('directories'))
+
+APP_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL_DIR = os.path.join(APP_DIR, 'models')
+
+MODEL_VIT_INPUT = 720
+MODEL_VIT_NAME = 'B_16'

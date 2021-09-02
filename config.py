@@ -2,16 +2,24 @@ import os
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# Models configs
+
 MODEL_DIR = os.path.join(APP_DIR, 'models')
+
+# Visual Transformer configs
 
 MODEL_VIT_DIR = os.path.join(MODEL_DIR, 'vit')
 MODEL_VIT_INPUT = 720
 MODEL_VIT_NAME = 'B_16'
 
+MODEL_VIT_ENCODER_DIR = f'{MODEL_VIT_DIR}_encoder'
+
+# Base configs
 
 REQUIRED_DIRECTORIES = [
     MODEL_DIR,
     MODEL_VIT_DIR,
+    MODEL_VIT_ENCODER_DIR,
 ]
 
 
@@ -23,8 +31,8 @@ if __name__ == '__main__':
         :return: bool
         """
 
-        if os.path.isfile(directory_current):
-            raise FileExistsError(directory_current)
+        if os.path.isfile(path):
+            raise FileExistsError(path)
 
         return os.path.exists(path)
 

@@ -1,5 +1,4 @@
 from typing import Iterable
-from time import perf_counter
 
 import grequests
 from requests.models import Response

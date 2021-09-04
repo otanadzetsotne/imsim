@@ -26,7 +26,7 @@ ImagePILType = type(ImagePIL)
 
 class Image(BaseModel):
     url: Optional[HttpUrl] = None
-    client_id: Optional[int] = None
+    id_custom: Optional[int] = None
 
     class Config:
         arbitrary_types_allowed = True

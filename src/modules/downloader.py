@@ -19,7 +19,7 @@ from src.exceptions import BadUrlError
 
 class Downloader:
     @staticmethod
-    def download(
+    def one(
             image: ImageIn,
     ) -> ImageInner:
         """
@@ -56,7 +56,7 @@ class Downloader:
         return image_inner
 
     @classmethod
-    def download_map(
+    def map(
             cls,
             images: ImagesIn,
     ) -> ImagesInner:
@@ -67,6 +67,6 @@ class Downloader:
         """
 
         with Pool() as pool:
-            images = pool.map(cls.download, images)
+            images = pool.map(cls.one, images)
 
         return ImagesInner(images=images)

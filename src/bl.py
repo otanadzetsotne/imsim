@@ -1,39 +1,24 @@
-from src.modules.downloader import Downloader
-from src.dtypes import PredictionIn
-from src.dtypes import ImagesIn
-from src.dtypes import ImagesInner
-
-
-class BusinessLogicMediator:
-    """
-    Mediator class that specifies high level contracts for functions given / received data types
-    """
-
-    @staticmethod
-    def download_map(
-            images: ImagesIn,
-    ) -> ImagesInner:
-        """
-        Downloading images
-
-        :param images: ImagesIn
-        :return: ImagesInner
-        """
-
-        return Downloader.download_map(images)
+from src.mediator import MediatorFacade
+from src.dtypes import (
+    PredictionIn,
+    PredictionInMulti,
+    ImagesIn,
+    ImagesInner,
+)
 
 
 class BusinessLogic:
-    mediator = BusinessLogicMediator
+    mediator = MediatorFacade
 
     @classmethod
-    def predict(
+    def add(
             cls,
-            prediction_request: PredictionIn,
+            request: PredictionInMulti,
     ):
-        model = prediction_request.model
-        image = prediction_request.image
+        images = cls.mediator.downloader.map(request.images)
 
-        # get/validate image
-        # get model
-        # create prediction
+        if not any([image.err for image in images]):
+            # All images with error
+            pass
+
+        model = cls.mediator.model.colect(request.model)

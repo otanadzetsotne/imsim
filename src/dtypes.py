@@ -45,12 +45,8 @@ class ImageIn(Image):
     pass
 
 
-class ImagesIn(BaseModel):
-    images: List[ImageIn]
-
-
-class ImagesInner(BaseModel):
-    images: List[ImageInner]
+ImagesIn = List[ImageIn]
+ImagesInner = List[ImageInner]
 
 
 # Prediction pydantic models

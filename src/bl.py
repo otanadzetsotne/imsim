@@ -17,7 +17,7 @@ class BusinessLogic:
     ):
         images = cls.mediator.downloader.map(request.images)
 
-        if not any([image.err for image in images]):
+        if not cls.mediator.images.has_correct(images):
             # All images with error
             pass
 

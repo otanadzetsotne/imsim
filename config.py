@@ -22,6 +22,24 @@ REQUIRED_DIRECTORIES = [
     MODEL_VIT_ENCODER_DIR,
 ]
 
+# Business Logic configs
+
+EXISTS_SCORE = .9
+
+# Downloader configs
+
+IMAGE_PIL_FORMAT = 'RGB'
+IMAGE_CONTENT_TYPES = [
+    'image/gif',
+    'image/jpeg',
+    'image/png',
+    'image/tiff',
+    'image/vnd.microsoft.icon',
+    'image/x-icon',
+    'image/vnd.djvu',
+    'image/svg+xml',
+]
+
 
 if __name__ == '__main__':
     def directory_exists(path: str):

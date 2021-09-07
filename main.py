@@ -3,6 +3,7 @@ from src.dtypes import AddIn
 from src.dtypes import SearchIn
 from src.dtypes import ExistsIn
 from src.dtypes import DeleteIn
+from src.bl import BusinessLogic
 
 
 app = FastAPI()
@@ -13,12 +14,11 @@ async def root():
     return {'message': 'hello world'}
 
 
-# TODO: need multiple images here
 @app.post('/add')
 async def add(
         request: AddIn,
 ):
-    return {'request': request}
+    return BusinessLogic.add(request)
 
 
 @app.post('/search')

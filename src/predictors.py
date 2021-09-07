@@ -3,12 +3,12 @@ from abc import ABCMeta, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
 
 from src.vit import ModelViT
-from src.encoder import ModelEncoder
+from src.encoder import ModelVitEncoder
 from src.datatypes import ImageData, ImageSegment
 
 
-class PredictorEncoder:
-    __model = ModelEncoder()
+class PredictorVitEncoder:
+    __model = ModelVitEncoder()
 
     def predict(self, images: Iterable[ImageData]) -> Iterable[ImageData]:
         return map(self.__predict_image, images)

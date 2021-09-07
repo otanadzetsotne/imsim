@@ -11,7 +11,7 @@ from pytorch_pretrained_vit.model import ViT as modelViT
 
 from config import (
     MODEL_DIR,
-    MODEL_VIT_INPUT,
+    MODEL_INPUT,
     MODEL_VIT_NAME,
 )
 from src.datatypes import PILImage
@@ -93,9 +93,7 @@ class ModelViT:
 
     def __init__(self):
         self.__model_loader = _ModelLoader(MODEL_VIT_NAME, MODEL_VIT_INPUT)
-
-        # TODO: зачем вызывать модель заранее?
-        # self.__model_loader.get()
+        self.__model_loader.get()
 
     def predict(self, img: PILImage) -> np.ndarray:
         """ Predict """

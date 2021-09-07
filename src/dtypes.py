@@ -13,9 +13,7 @@ from config import EXISTS_SCORE
 
 
 class Model(Enum):
-    vit_l = 'vit_l'
-    vit_m = 'vit_m'
-    vit_s = 'vit_s'
+    vit = 'vit'
 
 
 # Image pydantic models
@@ -34,11 +32,12 @@ class Image(BaseModel):
 
 class ImageInner(Image):
     pil: Optional[ImagePILType] = None
+    prediction: Optional[List[float]] = None
     err: Optional[type(Exception)] = None
 
 
 class ImageOut(Image):
-    pass
+    err: Optional[Exception] = None
 
 
 class ImageIn(Image):
@@ -47,6 +46,7 @@ class ImageIn(Image):
 
 ImagesIn = List[ImageIn]
 ImagesInner = List[ImageInner]
+ImagesOut = List[ImageOut]
 
 
 # Prediction pydantic models
@@ -64,10 +64,18 @@ class PredictionInMulti(Prediction):
     images: ImagesIn
 
 
+class PredictionOutMulti(Prediction):
+    images: ImagesOut
+
+
 # High level requests pydantic models
 
 
 class AddIn(PredictionInMulti):
+    pass
+
+
+class AddOut(PredictionOutMulti):
     pass
 
 

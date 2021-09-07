@@ -5,12 +5,22 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 # Models configs
 
 MODEL_DIR = os.path.join(APP_DIR, 'models')
+MODEL_INPUT = 640
 
 # Visual Transformer configs
 
-MODEL_VIT_DIR = os.path.join(MODEL_DIR, 'vit')
-MODEL_VIT_INPUT = 720
+# Models from https://github.com/lukemelas/PyTorch-Pretrained-ViT
+MODEL_VIT_NAMES = [
+    'B_16',
+    'B_32',
+    'L_32',
+    'B_16_imagenet1k',
+    'B_32_imagenet1k',
+    'L_16_imagenet1k',
+    'L_32_imagenet1k',
+]
 MODEL_VIT_NAME = 'B_16'
+MODEL_VIT_DIR = os.path.join(MODEL_DIR, 'vit')
 
 MODEL_VIT_ENCODER_DIR = f'{MODEL_VIT_DIR}_encoder'
 

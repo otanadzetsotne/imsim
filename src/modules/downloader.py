@@ -69,4 +69,4 @@ class Downloader:
         with Pool() as pool:
             images = pool.map(cls.one, images)
 
-        return ImagesInner(images=images)
+        return images

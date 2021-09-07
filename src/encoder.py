@@ -33,7 +33,7 @@ class _ModelLoader:
         return self.__model
 
 
-class ModelEncoder:
+class ModelVitEncoder:
     """ For data compression from (n, 768) shape vectors to (n, 256) shape """
 
     def __init__(self):

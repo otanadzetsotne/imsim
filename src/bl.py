@@ -1,6 +1,7 @@
 from src.mediator import MediatorFacade
 from src.dtypes import (
     AddIn,
+    AddOut,
     SearchIn,
     ExistsIn,
     DeleteIn,
@@ -14,13 +15,14 @@ class BusinessLogic:
     def add(
             cls,
             request: AddIn,
-    ):
+    ) -> AddOut:
         images = cls.mediator.downloader.map(request.images)
 
         if cls.mediator.images.has_correct(images):
-            model = cls.mediator.model.colect(request.model)
+            model = cls.mediator.collector.collect(request.model)
+            images = cls.mediator.predictor.predict(model, images)
 
-        # TODO
+        return AddOut(model=request.model, images=images)
 
     @classmethod
     def search(

@@ -36,4 +36,4 @@ class ImagesHelper:
         :return: bool
         """
 
-        return any([image.err for image in images])
+        return any([image.err is None for image in images])

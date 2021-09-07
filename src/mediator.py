@@ -1,69 +1,7 @@
-from src.modules.downloader import Downloader
-from src.modules.images import ImagesHelper
-
-from src.dtypes import (
-    PredictionIn,
-    PredictionInMulti,
-    ImagesIn,
-    ImagesInner,
-)
-
-
-class MediatorDownloader:
-    @staticmethod
-    def map(
-            images: ImagesIn,
-    ) -> ImagesInner:
-        """
-        Downloading images
-
-        :param images: ImagesIn
-        :return: ImagesInner
-        """
-
-        return Downloader.map(images)
-
-
-class MediatorImages:
-    @staticmethod
-    def filter_correct(
-            images: ImagesInner,
-    ) -> ImagesInner:
-        """
-        Filter ImagesInner objects
-        :param images: ImagesInner
-        :return: ImagesInner
-        """
-
-        return ImagesHelper.filter_correct(images)
-
-    @staticmethod
-    def filter_error(
-            images: ImagesInner,
-    ) -> ImagesInner:
-        """
-        Filter ImagesInner object
-        :param images: ImagesInner
-        :return: ImagesInner
-        """
-
-        return ImagesHelper.filter_error(images)
-
-    @staticmethod
-    def has_correct(
-            images: ImagesInner,
-    ) -> bool:
-        """
-        Check ImagesInner object
-        :param images: ImagesInner
-        :return: bool
-        """
-
-        return ImagesHelper.has_correct(images)
-
-
-class MediatorModel:
-    pass
+from src.mediators.downloader import MediatorDownloader
+from src.mediators.predictor import MediatorPredictor
+from src.mediators.collector import MediatorCollector
+from src.mediators.images import MediatorImages
 
 
 class MediatorFacade:
@@ -72,5 +10,6 @@ class MediatorFacade:
     """
 
     downloader = MediatorDownloader
+    predictor = MediatorPredictor
+    collector = MediatorCollector
     images = MediatorImages
-    model = MediatorModel

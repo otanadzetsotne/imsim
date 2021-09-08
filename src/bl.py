@@ -5,6 +5,8 @@ from src.dtypes import (
     SearchIn,
     ExistsIn,
     DeleteIn,
+    ImagesInner,
+    Model,
 )
 
 
@@ -17,10 +19,11 @@ class BusinessLogic:
             request: AddIn,
     ) -> AddOut:
         images = cls.mediator.downloader.map(request.images)
+        images = cls.__predict(request.model, images)
 
         if cls.mediator.images.has_correct(images):
-            model = cls.mediator.collector.collect(request.model)
-            images = cls.mediator.predictor.predict(model, images)
+            # TODO: Add to DB
+            pass
 
         return AddOut(model=request.model, images=images)
 
@@ -29,21 +32,58 @@ class BusinessLogic:
             cls,
             request: SearchIn,
     ):
-        image = cls.mediator.downloader.one(request.image)
-        # TODO
+        images = [cls.mediator.downloader.one(request.image)]
+        images = cls.__predict(request.model, images)
+
+        if cls.mediator.images.has_correct(images):
+            # TODO: Search in DB
+            pass
+
+        pass
 
     @classmethod
     def exists(
             cls,
             request: ExistsIn,
     ):
-        image = cls.mediator.downloader.one(request.image)
-        # TODO
+        images = cls.mediator.downloader.one(request.images)
+        images = cls.__predict(request.model, images)
+
+        if cls.mediator.images.has_correct(images):
+            # TODO: Search in DB
+            pass
+
+        pass
 
     @classmethod
     def delete(
             cls,
             request: DeleteIn,
     ):
-        # TODO
+        images = cls.mediator.downloader.map(request.images)
+        images = cls.__predict(request.model, images)
+
+        if cls.mediator.images.has_correct(images):
+            # TODO: Delete from DB
+            pass
+
         pass
+
+    @classmethod
+    def __predict(
+            cls,
+            model: Model,
+            images: ImagesInner,
+    ):
+        """
+        Get predicted images
+        :param model: model type
+        :param images: images to predict
+        :return: predicted images
+        """
+
+        if cls.mediator.images.has_correct(images):
+            model = cls.mediator.collector.collect(model)
+            images = cls.mediator.predictor.predict(model, images)
+
+        return images

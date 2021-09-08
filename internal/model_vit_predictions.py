@@ -26,38 +26,34 @@ class Predictor:
             self,
             image_name: str,
     ):
-        with Image.open(f'{self.path_images}/{image_name}') as image:
-            image = image.convert(IMAGE_PIL_FORMAT)
+        prediction_path = f'{self.path_predictions}/{image_name}.pickle'
+
+        if not os.path.exists(prediction_path):
+            image = Image.open(f'{self.path_images}/{image_name}').convert(IMAGE_PIL_FORMAT)
+            # with Image.open(f'{self.path_images}/{image_name}') as image:
+            #     image = image.convert(IMAGE_PIL_FORMAT)
             prediction = self.model.predict(image)
 
-            with open(f'{self.path_predictions}/{image_name}.pickle', 'wb') as f:
+            with open(prediction_path, 'wb') as f:
                 print(f'Predicted {image_name}')
                 pickle.dump(prediction, f)
 
     def predict_map(
             self
     ):
-        # images = os.listdir(self.path_images)
-        #
-        # with open('list.pickle', 'wb') as f:
-        #     pickle.dump(images, f)
-
-        with open('list.pickle', 'rb') as f:
-            images = pickle.load(f)
+        images = os.listdir(self.path_images)
 
         print('Got images list')
         print(f'Images quantity: {len(images)}')
 
         print('Start mapping')
 
-        with ThreadPoolExecutor() as executor:
+        with ProcessPoolExecutor(1) as executor:
             list(executor.map(self.predict_one, images))
-
-        # images = list(images)
 
 
 if __name__ == '__main__':
-    p_images = 'F:\\data\\Datasets\\google'
+    p_images = 'C:\\Users\\otana\\Разработка\\py\\imsim_dataset\\google'
     p_predictions = 'C:\\Users\\otana\\Разработка\\py\\imsim_predictions'
 
     Predictor(p_images, p_predictions).predict_map()

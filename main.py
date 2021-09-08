@@ -25,21 +25,21 @@ async def add(
 async def search(
         request: SearchIn,
 ):
-    return {'request': request}
+    return BusinessLogic.search(request)
 
 
 @app.post('/exists')
 async def exists(
         request: ExistsIn,
 ):
-    return {'request': request}
+    return BusinessLogic.exists(request)
 
 
 @app.post('/delete')
 async def delete(
         request: DeleteIn,
 ):
-    return {'m': request}
+    return BusinessLogic.delete(request)
 
 
 # TODO: delete redundant requirements

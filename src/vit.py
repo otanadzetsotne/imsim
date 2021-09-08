@@ -36,6 +36,7 @@ class _ModelLoader:
         self.__image_size = image_size
 
         self.__model_path = f'{MODEL_DIR}/{self.__model_name}_{self.__image_size}.pickle'
+        print(self.__model_path)
         self.__model = None
 
     def get(self) -> modelViT:
@@ -92,7 +93,7 @@ class ModelViT:
     __model_loader = None
 
     def __init__(self):
-        self.__model_loader = _ModelLoader(MODEL_VIT_NAME, MODEL_VIT_INPUT)
+        self.__model_loader = _ModelLoader(MODEL_VIT_NAME, MODEL_INPUT)
         self.__model_loader.get()
 
     def predict(self, img: PILImage) -> np.ndarray:
@@ -109,6 +110,8 @@ class ModelViT:
             prediction = self.__predictor()(img)
             prediction = prediction.cpu() if torch.cuda.is_available() else prediction
             prediction = np.array(prediction).reshape(1, -1)
+
+            torch.cuda.empty_cache()
 
             return prediction
 
@@ -130,7 +133,7 @@ class ModelViT:
         """ Get transform layer for neural network input """
 
         return transforms.Compose([
-            transforms.Resize((MODEL_VIT_INPUT, MODEL_VIT_INPUT)),
+            transforms.Resize((MODEL_INPUT, MODEL_INPUT)),
             transforms.ToTensor(),
             transforms.Normalize(0.5, 0.5),
         ])

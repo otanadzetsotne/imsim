@@ -87,5 +87,5 @@ class DeleteIn(PredictionInMulti):
     pass
 
 
-class ExistsIn(PredictionIn):
+class ExistsIn(PredictionInMulti):
     score: float = EXISTS_SCORE

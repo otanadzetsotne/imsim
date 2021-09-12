@@ -1,5 +1,5 @@
 import torch
-from src.modules.predictor import Predictor
+from src.utils.predictor import Predictor
 from src.dtypes import ImagesInner
 
 

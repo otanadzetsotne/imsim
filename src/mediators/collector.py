@@ -1,5 +1,5 @@
 import torch
-from src.modules.collector import Collector
+from src.utils.collector import Collector
 from src.dtypes import Model
 
 

@@ -1,4 +1,4 @@
-from src.modules.images import ImagesHelper
+from src.utils.images import ImagesHelper
 from src.dtypes import ImagesInner
 
 

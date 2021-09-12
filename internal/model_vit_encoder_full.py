@@ -60,7 +60,7 @@ def create_nn(
 ):
     cuda_available = torch.cuda.is_available()
 
-    data = get_data('C:\\Users\\otana\\Разработка\\py\\imsim_predictions\\predictions.pickle')
+    data = get_data('/media/otana/Remote HDD/data/imsim_predictions/predictions.pickle')
     data_len = len(data)
 
     data_train = data[:int(data_len * .1 // -1)]
@@ -77,8 +77,8 @@ def create_nn(
         shuffle=True,
     )
 
-    epochs = 100
-    appropriate_val_rate = 1e-2
+    epochs = 1000
+    appropriate_val_rate = 5e-2
     criterion = nn.MSELoss()
 
     model = NeuralNetwork()
@@ -86,8 +86,6 @@ def create_nn(
 
     optimizer = torch.optim.Adam(
         params=model.parameters(),
-        lr=1e-3,
-        weight_decay=1e-8,
     )
 
     min_valid_loss = np.inf

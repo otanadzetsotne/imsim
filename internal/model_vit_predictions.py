@@ -1,4 +1,5 @@
 import pickle
+import time
 import fire
 import os
 from PIL import Image
@@ -32,16 +33,21 @@ class Predictor:
         return Image.open(f'{self.path_images}/{image_name}').convert(IMAGE_PIL_FORMAT)
 
     def predict_map(
-            self
+            self,
+            rest: int,
     ):
-        images = os.listdir(self.path_images)
+        images = os.listdir(self.path_images)[:500_000]
 
-        print('Got images list')
-        print(f'Images quantity: {len(images)}')
+        with open('images_list.pickle', 'wb') as f:
+            pickle.dump(images, f)
+
+        print(f'Got images list ({len(images)} images)')
 
         batch_size = 250
         print('Start mapping')
         for batch_i in range(len(images) // batch_size):
+            tic = time.perf_counter()
+
             print()
             print('New iteration')
 
@@ -56,20 +62,30 @@ class Predictor:
             print('Images collected')
 
             batch_predictions = map(self.predict, batch_images)
-            print('Images predicted')
+            print('Images predictions mapping created')
 
             for i, prediction in enumerate(batch_predictions):
                 with open(f'{self.path_predictions}/{batch_names[i]}.pickle', 'wb') as f:
                     pickle.dump(prediction, f)
-                    print('Predictions saved')
+            print('Predictions saved')
+
+            tac = time.perf_counter() - tic
+            print(f'Prediction time: {batch_size // tac}/1s.')
+
+            time.sleep(rest)
 
 
 def predict(
         path_images: str,
         path_predictions: str,
+        rest: int = 0,
 ):
-    Predictor(path_images, path_predictions).predict_map()
+    Predictor(path_images, path_predictions).predict_map(rest)
 
 
 if __name__ == '__main__':
+    # predict(
+    #     '/media/otana/Remote HDD/data/Datasets/ImageNet_max500px',
+    #     '/home/otana/development/py/imsim_predictions/'
+    # )
     fire.Fire()

@@ -1,4 +1,4 @@
-import torch
+from torch import nn
 from src.utils.predictor import Predictor
 from src.dtypes import ImagesInner
 
@@ -7,7 +7,7 @@ class MediatorPredictor:
     @classmethod
     def predict(
             cls,
-            model: torch.nn.Module,
+            model: nn.Module,
             images: ImagesInner,
     ) -> ImagesInner:
         """

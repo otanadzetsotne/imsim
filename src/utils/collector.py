@@ -1,6 +1,12 @@
 import torch
+
 from src.models.vit import ModelLoaderViT
+from src.models.vit_encoder import ModelLoaderViTEncoder
 from src.dtypes import Model
+from config import (
+    MODEL_VIT_NAME,
+    MODEL_VIT_ENCODER_NAME,
+)
 
 
 class _Identity(torch.nn.Module):
@@ -17,8 +23,6 @@ class _Identity(torch.nn.Module):
 
 
 class Collector:
-    __vit_loader = ModelLoaderViT
-
     __vit = None
 
     @classmethod
@@ -33,7 +37,10 @@ class Collector:
         """
 
         if model_type == Model.vit:
-            return cls.__vit_collect()
+            if cls.__vit is None:
+                cls.__vit = cls.__vit_collect()
+
+            return cls.__vit
 
     @classmethod
     def __vit_collect(
@@ -44,14 +51,36 @@ class Collector:
         :return: torch.nn.Module
         """
 
-        if cls.__vit is None:
-            # Get ViT model
-            model_vit = cls.__vit_loader.get()
+        model = torch.nn.Sequential()
+        model.add_module(MODEL_VIT_NAME, cls.__get_vit())
+        model.add_module(MODEL_VIT_ENCODER_NAME, cls.__get_vit_encoder())
 
-            # Drop classification layer
-            model_vit.fc = _Identity()
+        return model
 
-            # Save model
-            cls.__vit = model_vit
+    @classmethod
+    def __get_vit(
+            cls,
+    ) -> torch.nn.Module:
+        """
+        Get base ViT model
+        :return: model
+        """
 
-        return cls.__vit
+        # Get ViT model
+        model_vit = ModelLoaderViT.get()
+
+        # Drop classification layer
+        model_vit.fc = _Identity()
+
+        return model_vit
+
+    @classmethod
+    def __get_vit_encoder(
+            cls,
+    ) -> torch.nn.Module:
+        """
+        Get ViT model encoder
+        :return: encoder model
+        """
+
+        return ModelLoaderViTEncoder.get()

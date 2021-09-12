@@ -10,6 +10,11 @@ def concat(
         path_predictions: str,
         path_predictions_concatenated: str,
 ):
+    """
+    :param path_predictions: path to pickled predictions vectors
+    :param path_predictions_concatenated: path to concatenated predictions matrix file
+    """
+
     predictions = os.listdir(path_predictions)
     predictions_quantity = len(predictions)
     predictions = map(lambda x: f'{path_predictions}/{x}', predictions)

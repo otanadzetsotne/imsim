@@ -20,16 +20,15 @@ MODEL_VIT_NAMES = [
     'L_32_imagenet1k',
 ]
 MODEL_VIT_NAME = 'B_16'
-MODEL_VIT_DIR = os.path.join(MODEL_DIR, 'vit')
+MODEL_VIT_PATH = os.path.join(MODEL_DIR, f'{MODEL_VIT_NAME}_{MODEL_INPUT}.pickle')
 
-MODEL_VIT_ENCODER_DIR = f'{MODEL_VIT_DIR}_encoder'
+MODEL_VIT_ENCODER_NAME = 'ViT_encoder'
+MODEL_VIT_ENCODER_PATH = os.path.join(MODEL_DIR, f'{MODEL_VIT_ENCODER_NAME}.pickle')
 
 # Base configs
 
 REQUIRED_DIRECTORIES = [
     MODEL_DIR,
-    MODEL_VIT_DIR,
-    MODEL_VIT_ENCODER_DIR,
 ]
 
 # Business Logic configs

@@ -6,46 +6,7 @@ import torch
 from torch import nn
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
-
-
-class NeuralNetwork(nn.Module):
-    def __init__(self):
-        super(NeuralNetwork, self).__init__()
-
-        # Encoder
-        self.encoder = nn.Sequential()
-        self.encoder.add_module('layer_640', nn.Linear(768, 640))
-        self.encoder.add_module('layer_640_activation', nn.PReLU())
-        self.encoder.add_module('layer_512', nn.Linear(640, 512))
-        self.encoder.add_module('layer_512_activation', nn.PReLU())
-        self.encoder.add_module('layer_384', nn.Linear(512, 384))
-        self.encoder.add_module('layer_384_activation', nn.PReLU())
-        self.encoder.add_module('layer_256', nn.Linear(384, 256))
-        self.encoder.add_module('layer_256_activation', nn.PReLU())
-        self.encoder.add_module('layer_128', nn.Linear(256, 128))
-        self.encoder.add_module('layer_128_activation', nn.PReLU())
-        self.encoder.add_module('layer_64', nn.Linear(128, 64))
-        self.encoder.add_module('layer_64_activation', nn.Tanh())
-
-        # Decoder
-        self.decoder = nn.Sequential()
-        self.decoder.add_module('layer_128', nn.Linear(64, 128))
-        self.decoder.add_module('layer_128_activation', nn.PReLU())
-        self.decoder.add_module('layer_256', nn.Linear(128, 256))
-        self.decoder.add_module('layer_256_activation', nn.PReLU())
-        self.decoder.add_module('layer_384', nn.Linear(256, 384))
-        self.decoder.add_module('layer_384_activation', nn.PReLU())
-        self.decoder.add_module('layer_512', nn.Linear(384, 512))
-        self.decoder.add_module('layer_512_activation', nn.PReLU())
-        self.decoder.add_module('layer_640', nn.Linear(512, 640))
-        self.decoder.add_module('layer_640_activation', nn.PReLU())
-        self.decoder.add_module('layer_768', nn.Linear(640, 768))
-        self.decoder.add_module('layer_768_activation', nn.Tanh())
-
-    def forward(self, x):
-        encoded = self.encoder(x)
-        decoded = self.decoder(encoded)
-        return decoded
+from src.models.vit_encoder import ViTAutoEncoder
 
 
 def get_data(
@@ -60,7 +21,7 @@ def create_nn(
 ):
     cuda_available = torch.cuda.is_available()
 
-    data = get_data('/media/otana/Remote HDD/data/imsim_predictions/predictions.pickle')
+    data = get_data('../../predictions.pickle')
     data_len = len(data)
 
     data_train = data[:int(data_len * .1 // -1)]
@@ -73,15 +34,15 @@ def create_nn(
     )
     loader_val = DataLoader(
         dataset=data_val,
-        batch_size=256,
+        batch_size=2048,
         shuffle=True,
     )
 
     epochs = 1000
-    appropriate_val_rate = 5e-2
+    appropriate_val_rate = 1e-2
     criterion = nn.MSELoss()
 
-    model = NeuralNetwork()
+    model = ViTAutoEncoder()
     model = model.cuda() if cuda_available else model.cpu()
 
     optimizer = torch.optim.Adam(

@@ -14,11 +14,11 @@ class ModelLoaderViT(ModelLoader):
     For transporting a neural network to a working object of Model class
     """
 
-    __path = MODEL_VIT_PATH
-    __model = None
+    _path = MODEL_VIT_PATH
+    _model = None
 
     @classmethod
-    def __make(cls) -> modelViT:
+    def _make(cls) -> modelViT:
         """
         Download model from ViT library to local file storage
         :return: ViT model

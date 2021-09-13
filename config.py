@@ -19,7 +19,7 @@ MODEL_VIT_NAMES = [
     'L_16_imagenet1k',
     'L_32_imagenet1k',
 ]
-MODEL_VIT_NAME = 'ViT_B_16'
+MODEL_VIT_NAME = 'B_16'
 MODEL_VIT_PATH = os.path.join(MODEL_DIR, f'{MODEL_VIT_NAME}_{MODEL_INPUT}.pickle')
 
 MODEL_VIT_ENCODER_NAME = 'ViT_encoder'

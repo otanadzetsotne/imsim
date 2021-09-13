@@ -1,59 +1,60 @@
 import os
 import torch
 from torch import nn
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 
-class ModelLoader(meta=ABCMeta):
-    __path = None
-    __model = None
+class ModelLoader(ABC):
+    _path = None
+    _model = None
 
     @classmethod
     def get(cls) -> nn.Module:
-        if not cls.__exists():
-            cls.__model = cls.__make()
-            cls.__save()
+        if not cls._exists():
+            cls._model = cls._make()
+            cls._save()
 
-        if cls.__model is None:
-            cls.__model = cls.__load()
+        if cls._model is None:
+            cls._model = cls._load()
 
         # if torch.cuda.is_available():
-        #     cls.__model.cuda()
+        #     cls._model.cuda()
 
-        cls.__model.eval()
+        cls._model.eval()
+        cls._model.cpu()
 
-        return cls.__model
+        return cls._model
 
     @classmethod
-    def __save(cls):
+    def _save(cls):
         """
         Save model to local file system
         :return: None
         """
 
-        torch.save(cls.__model, cls.__path)
+        torch.save(cls._model, cls._path)
 
     @classmethod
-    def __exists(cls) -> bool:
+    def _exists(cls) -> bool:
         """
         Check if model is already downloaded to local file storage
         :return: bool
         """
 
-        return os.path.exists(cls.__path) and os.path.isfile(cls.__path)
+        return os.path.exists(cls._path) and os.path.isfile(cls._path)
 
     @classmethod
-    def __load(cls) -> nn.Module:
+    def _load(cls) -> nn.Module:
         """
         Load model from local file storage
         :return: nn.Module
         """
 
-        return torch.load(cls.__path)
+        return torch.load(cls._path)
 
     @classmethod
     @abstractmethod
-    def __make(cls) -> nn.Module:
+    def _make(cls) -> nn.Module:
         """
         Load from
         :return: nn.Module

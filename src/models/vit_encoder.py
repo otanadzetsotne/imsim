@@ -6,9 +6,9 @@ from config import (
 
 
 class ModelLoaderViTEncoder(ModelLoader):
-    __path = MODEL_VIT_ENCODER_PATH
-    __model = None
+    _path = MODEL_VIT_ENCODER_PATH
+    _model = None
 
     @classmethod
-    def __make(cls):
+    def _make(cls):
         raise NeuralNetworkModelNotFoundError

@@ -53,7 +53,7 @@ class Collector:
 
         model = torch.nn.Sequential()
         model.add_module(MODEL_VIT_NAME, cls.__get_vit())
-        model.add_module(MODEL_VIT_ENCODER_NAME, cls.__get_vit_encoder())
+        # model.add_module(MODEL_VIT_ENCODER_NAME, cls.__get_vit_encoder())
 
         return model
 

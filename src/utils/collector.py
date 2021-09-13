@@ -23,8 +23,6 @@ class _Identity(torch.nn.Module):
 
 
 class Collector:
-    __vit = None
-
     @classmethod
     def collect(
             cls,
@@ -37,10 +35,7 @@ class Collector:
         """
 
         if model_type == Model.vit:
-            if cls.__vit is None:
-                cls.__vit = cls.__vit_collect()
-
-            return cls.__vit
+            return cls.__vit_collect()
 
     @classmethod
     def __vit_collect(
@@ -68,7 +63,6 @@ class Collector:
 
         # Get ViT model
         model_vit = ModelLoaderViT.get()
-
         # Drop classification layer
         model_vit.fc = _Identity()
 

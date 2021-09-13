@@ -1,13 +1,11 @@
 import os
-import pickle
-from typing import List
 from scipy.spatial import distance
 from PIL import Image
 from pathlib import Path
 import torch
 from torchvision import transforms
 from src.dtypes import Model
-from src.mediators.collector import MediatorCollector
+from src.facades.mediators import MediatorCollector
 from config import MODEL_INPUT
 
 

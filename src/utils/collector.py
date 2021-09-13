@@ -1,7 +1,6 @@
 import torch
 
-from src.models.vit import ModelLoaderViT
-from src.models.vit_encoder import ModelLoaderViTEncoder
+from src.facades.models import Models
 from src.dtypes import Model
 from config import (
     MODEL_VIT_NAME,
@@ -62,7 +61,7 @@ class Collector:
         """
 
         # Get ViT model
-        model_vit = ModelLoaderViT.get()
+        model_vit = Models.vit.get()
         # Drop classification layer
         model_vit.fc = _Identity()
 
@@ -77,4 +76,4 @@ class Collector:
         :return: encoder model
         """
 
-        return ModelLoaderViTEncoder.get()
+        return Models.vit_encoder.get()

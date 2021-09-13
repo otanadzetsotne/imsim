@@ -40,6 +40,3 @@ async def delete(
         request: DeleteIn,
 ):
     return BusinessLogic.delete(request)
-
-
-# TODO: delete redundant requirements

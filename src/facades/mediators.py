@@ -4,7 +4,7 @@ from src.mediators.collector import MediatorCollector
 from src.mediators.images import MediatorImages
 
 
-class MediatorFacade:
+class Mediators:
     """
     Mediator facade class that specifies high level contracts for functions given / received data types
     """

@@ -1,4 +1,4 @@
-from src.mediator import MediatorFacade
+from src.facades.mediators import Mediators
 from src.dtypes import (
     AddIn,
     AddOut,
@@ -11,17 +11,17 @@ from src.dtypes import (
 
 
 class BusinessLogic:
-    mediator = MediatorFacade
+    mediators = Mediators
 
     @classmethod
     def add(
             cls,
             request: AddIn,
     ) -> AddOut:
-        images = cls.mediator.downloader.map(request.images)
+        images = cls.mediators.downloader.map(request.images)
         images = cls.__predict(request.model, images)
 
-        if cls.mediator.images.has_correct(images):
+        if cls.mediators.images.has_correct(images):
             # TODO: Add to DB
             pass
 
@@ -32,10 +32,10 @@ class BusinessLogic:
             cls,
             request: SearchIn,
     ):
-        images = [cls.mediator.downloader.one(request.image)]
+        images = [cls.mediators.downloader.one(request.image)]
         images = cls.__predict(request.model, images)
 
-        if cls.mediator.images.has_correct(images):
+        if cls.mediators.images.has_correct(images):
             # TODO: Search in DB
             pass
 
@@ -46,10 +46,10 @@ class BusinessLogic:
             cls,
             request: ExistsIn,
     ):
-        images = cls.mediator.downloader.one(request.images)
+        images = cls.mediators.downloader.one(request.images)
         images = cls.__predict(request.model, images)
 
-        if cls.mediator.images.has_correct(images):
+        if cls.mediators.images.has_correct(images):
             # TODO: Search in DB
             pass
 
@@ -60,10 +60,10 @@ class BusinessLogic:
             cls,
             request: DeleteIn,
     ):
-        images = cls.mediator.downloader.map(request.images)
+        images = cls.mediators.downloader.map(request.images)
         images = cls.__predict(request.model, images)
 
-        if cls.mediator.images.has_correct(images):
+        if cls.mediators.images.has_correct(images):
             # TODO: Delete from DB
             pass
 
@@ -82,8 +82,8 @@ class BusinessLogic:
         :return: predicted images
         """
 
-        if cls.mediator.images.has_correct(images):
-            model = cls.mediator.collector.collect(model)
-            images = cls.mediator.predictor.predict(model, images)
+        if cls.mediators.images.has_correct(images):
+            model = cls.mediators.collector.collect(model)
+            images = cls.mediators.predictor.predict(model, images)
 
         return images

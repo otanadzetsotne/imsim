@@ -2,6 +2,7 @@ from src.mediators.downloader import MediatorDownloader
 from src.mediators.predictor import MediatorPredictor
 from src.mediators.collector import MediatorCollector
 from src.mediators.images import MediatorImages
+from src.mediators.db import MediatorDB
 
 
 class Mediators:
@@ -13,3 +14,4 @@ class Mediators:
     predictor = MediatorPredictor
     collector = MediatorCollector
     images = MediatorImages
+    db = MediatorDB

@@ -5,7 +5,7 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 # Models configs
 
 MODEL_DIR = os.path.join(APP_DIR, 'models')
-MODEL_INPUT = 640
+MODEL_INPUT = 480
 
 # Visual Transformer configs
 

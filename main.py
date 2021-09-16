@@ -9,11 +9,6 @@ from src.bl import BusinessLogic
 app = FastAPI()
 
 
-@app.get('/')
-async def root():
-    return {'message': 'hello world'}
-
-
 @app.post('/add')
 async def add(
         request: AddIn,

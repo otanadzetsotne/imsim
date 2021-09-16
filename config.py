@@ -31,10 +31,6 @@ REQUIRED_DIRECTORIES = [
     MODEL_DIR,
 ]
 
-# Business Logic configs
-
-EXISTS_SCORE = .9
-
 # Downloader configs
 
 IMAGE_PIL_FORMAT = 'RGB'

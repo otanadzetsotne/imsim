@@ -3,6 +3,8 @@ from src.dtypes import (
     PredictionInMulti,
     PredictionOutMulti,
     ImagesInner,
+    ImagesOut,
+    ImageOut,
     Model,
 )
 
@@ -11,7 +13,7 @@ class BusinessLogic:
     mediators = Mediators
 
     @classmethod
-    def predict(
+    def request_predict(
             cls,
             request: PredictionInMulti,
     ):
@@ -20,16 +22,29 @@ class BusinessLogic:
         """
 
         images = cls.mediators.downloader.map(request.images)
-        images = cls.__predict(request.model, images)
+        images = cls.predict(request.model, images)
+        images = cls.images_inner_to_out(images)
 
         return PredictionOutMulti(model=request.model, images=images)
 
+    @staticmethod
+    def images_inner_to_out(
+            images: ImagesInner,
+    ) -> ImagesOut:
+        """
+        Convert ImagesInner object to ImagesOut object
+        :param images: images list to convert
+        :return: converted images
+        """
+
+        return [ImageOut(**dict(image)) for image in images]
+
     @classmethod
-    def __predict(
+    def predict(
             cls,
             model: Model,
             images: ImagesInner,
-    ):
+    ) -> ImagesInner:
         """
         Get predicted images
         :param model: model type

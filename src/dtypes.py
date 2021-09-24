@@ -1,7 +1,7 @@
 from enum import Enum
-from typing import List
 from typing import Optional
 
+import torch
 from PIL import Image as ImagePIL
 from pydantic import BaseModel
 from pydantic import HttpUrl
@@ -21,12 +21,15 @@ ImagePILType = type(ImagePIL)
 
 
 class Image(BaseModel):
-    url: Optional[HttpUrl] = None
+    url: HttpUrl
 
 
 class ImagePredicted(Image):
-    prediction: Optional[List[float]] = None
-    err: Optional[type(Exception)] = None
+    prediction: Optional[torch.Tensor] = None
+    err: Optional[Exception] = None
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class ImageInner(ImagePredicted):
@@ -41,9 +44,9 @@ class ImageOut(ImagePredicted):
     pass
 
 
-ImagesIn = List[ImageIn]
-ImagesInner = List[ImageInner]
-ImagesOut = List[ImageOut]
+ImagesIn = list[ImageIn]
+ImagesInner = list[ImageInner]
+ImagesOut = list[ImageOut]
 
 
 # Prediction pydantic models

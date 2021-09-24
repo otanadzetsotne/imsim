@@ -6,7 +6,7 @@ from config import MODEL_INPUT
 
 
 class Predictor:
-    __transformer = transforms.Compose([
+    transformer = transforms.Compose([
         transforms.Resize((MODEL_INPUT, MODEL_INPUT)),
         transforms.ToTensor(),
         transforms.Normalize(0.5, 0.5),
@@ -31,8 +31,18 @@ class Predictor:
         # Get images tensor
         tensor = cls.__get_tensor(images)
 
+        # Throw tensor to GPU RAM
+        if torch.cuda.is_available():
+            tensor = tensor.cuda()
+
         # Predict tensors
-        predictions = model(tensor)
+        with torch.no_grad():
+            predictions = model(tensor)
+            del tensor
+
+        # Throw predictions to cpu
+        if torch.cuda.is_available():
+            predictions = predictions.cpu()
 
         # Update images
         for k, prediction in enumerate(predictions):
@@ -58,7 +68,7 @@ class Predictor:
         pillows = [image.pil for image in images]
 
         # Tensors from images
-        tensors = [cls.__transformer(pillow).unsqueeze(0) for pillow in pillows]
+        tensors = [cls.transformer(pillow).unsqueeze(0) for pillow in pillows]
 
         # Concatenate tensors
         tensor = torch.cat(tensors, 0)

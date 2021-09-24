@@ -10,4 +10,4 @@ app = FastAPI()
 async def predict(
         request: PredictionInMulti,
 ):
-    return BusinessLogic.predict(request)
+    return BusinessLogic.request_predict(request)

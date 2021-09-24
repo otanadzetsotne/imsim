@@ -17,11 +17,10 @@ class ModelLoader(ABC):
         if cls._model is None:
             cls._model = cls._load()
 
-        # if torch.cuda.is_available():
-        #     cls._model.cuda()
+        if torch.cuda.is_available():
+            cls._model.cuda()
 
         cls._model.eval()
-        cls._model.cpu()
 
         return cls._model
 

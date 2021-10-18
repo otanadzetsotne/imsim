@@ -3,7 +3,7 @@ from src.utils.collector import Collector
 from src.dtypes import Model
 
 
-class MediatorCollector:
+class ProxyCollector:
     @classmethod
     def collect(
             cls,

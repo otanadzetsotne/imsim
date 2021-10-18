@@ -5,7 +5,7 @@ from src.dtypes import ImagesInner
 from src.dtypes import ImageInner
 
 
-class MediatorDownloader:
+class ProxyDownloader:
     @staticmethod
     def map(
             images: ImagesIn,

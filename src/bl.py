@@ -1,4 +1,4 @@
-from src.facades.mediators import Mediators
+from src.facades.proxies import Proxies
 from src.dtypes import (
     PredictionInMulti,
     PredictionOutMulti,
@@ -10,7 +10,7 @@ from src.dtypes import (
 
 
 class BusinessLogic:
-    mediators = Mediators
+    proxies = Proxies
 
     @classmethod
     def request_predict(
@@ -21,7 +21,7 @@ class BusinessLogic:
         Predict images
         """
 
-        images = cls.mediators.downloader.map(request.images)
+        images = cls.proxies.downloader.map(request.images)
         images = cls.predict(request.model, images)
         images = cls.images_inner_to_out(images)
 
@@ -52,8 +52,8 @@ class BusinessLogic:
         :return: predicted images
         """
 
-        if cls.mediators.images.has_correct(images):
-            model = cls.mediators.collector.collect(model)
-            images = cls.mediators.predictor.predict(model, images)
+        if cls.proxies.images.has_correct(images):
+            model = cls.proxies.collector.collect(model)
+            images = cls.proxies.predictor.predict(model, images)
 
         return images

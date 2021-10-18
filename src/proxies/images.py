@@ -2,7 +2,7 @@ from src.utils.images import ImagesHelper
 from src.dtypes import ImagesInner
 
 
-class MediatorImages:
+class ProxyImages:
     @staticmethod
     def filter_correct(
             images: ImagesInner,

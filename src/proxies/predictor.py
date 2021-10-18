@@ -3,7 +3,7 @@ from src.utils.predictor import Predictor
 from src.dtypes import ImagesInner
 
 
-class MediatorPredictor:
+class ProxyPredictor:
     @classmethod
     def predict(
             cls,

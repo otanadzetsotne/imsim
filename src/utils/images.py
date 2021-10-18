@@ -15,18 +15,6 @@ class ImagesHelper:
         return [image for image in images if image.err is None]
 
     @staticmethod
-    def filter_error(
-            images: ImagesInner,
-    ) -> ImagesInner:
-        """
-        Filter images and return just with errors
-        :param images: images to filter
-        :return: images with errors
-        """
-
-        return [image for image in images if image.err is not None]
-
-    @staticmethod
     def has_correct(
             images: ImagesInner,
     ) -> bool:

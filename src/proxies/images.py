@@ -8,24 +8,12 @@ class ProxyImages:
             images: ImagesInner,
     ) -> ImagesInner:
         """
-        Filter ImagesInner objects
+        Filter images and return just corrects
         :param images: ImagesInner
         :return: ImagesInner
         """
 
         return ImagesHelper.filter_correct(images)
-
-    @staticmethod
-    def filter_error(
-            images: ImagesInner,
-    ) -> ImagesInner:
-        """
-        Filter ImagesInner object
-        :param images: ImagesInner
-        :return: ImagesInner
-        """
-
-        return ImagesHelper.filter_error(images)
 
     @staticmethod
     def has_correct(

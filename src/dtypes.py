@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional
 
 import torch
-from PIL import Image as ImagePIL
+from PIL.Image import Image as ImagePIL
 from pydantic import BaseModel
 from pydantic import HttpUrl
 
@@ -15,9 +15,6 @@ class Model(Enum):
 
 
 # Image pydantic models
-
-
-ImagePILType = type(ImagePIL)
 
 
 class Image(BaseModel):
@@ -33,7 +30,7 @@ class ImagePredicted(Image):
 
 
 class ImageInner(ImagePredicted):
-    pil: Optional[ImagePILType] = None
+    pil: Optional[ImagePIL] = None
 
 
 class ImageIn(Image):

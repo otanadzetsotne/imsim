@@ -17,13 +17,18 @@ class Model(Enum):
 # Image pydantic models
 
 
+class ImageError(BaseModel):
+    code: int
+    desc: Optional[str] = None
+
+
 class Image(BaseModel):
     url: HttpUrl
 
 
 class ImagePredicted(Image):
     prediction: Optional[torch.Tensor] = None
-    err: Optional[Exception] = None
+    err: Optional[ImageError] = None
 
     class Config:
         arbitrary_types_allowed = True

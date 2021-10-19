@@ -2,6 +2,7 @@ import io
 from multiprocessing import Pool
 
 import requests
+from requests.models import HTTPError
 
 from config import (
     IMAGE_PIL_FORMAT,
@@ -13,6 +14,7 @@ from src.dtypes import (
     ImageInner,
     ImagesInner,
     ImagePIL,
+    ImageError,
 )
 from src.exceptions import BadUrlError
 
@@ -29,17 +31,18 @@ class Downloader:
         """
 
         image_inner = ImageInner(**dict(image))
+        image_inner.err = ImageError(code=200)
 
         try:
             # Make request
             response = requests.get(image.url, stream=True)
 
-            # Invalid url if response is None
-            if response is None or response.headers['Content-Type'] not in IMAGE_CONTENT_TYPES:
-                raise BadUrlError
-
             # Raises exception response code != 200
             response.raise_for_status()
+
+            # Invalid url if response is None
+            if response.headers['Content-Type'] not in IMAGE_CONTENT_TYPES:
+                raise BadUrlError
 
             # Create PIL
             image_response = response.content
@@ -50,8 +53,17 @@ class Downloader:
             # Update image object
             image_inner.pil = image_pil
 
-        except Exception as e:
-            image_inner.err = e
+        # TODO: exceptions logic refactoring
+        except BadUrlError as e:
+            image_inner.err.code = e.code
+            image_inner.err.desc = f'{e.code} Client error: Bad Request for url {image.url}'
+        except HTTPError as e:
+            image_inner.err.code = e.response.status_code
+            image_inner.err.desc = str(e)
+        except Exception:
+            code = 500
+            image_inner.err.code = code
+            image_inner.err.desc = f'{code} Server error: Internal Server Error for url {image.url}'
 
         return image_inner
 

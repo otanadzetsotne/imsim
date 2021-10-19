@@ -1,8 +1,12 @@
-class BadUrlError(Exception):
+from requests.models import HTTPError
+
+
+class BadUrlError(HTTPError):
     """
     Raises when url is invalid
     """
-    pass
+
+    code = 400
 
 
 class NeuralNetworkModelNotFoundError(Exception):

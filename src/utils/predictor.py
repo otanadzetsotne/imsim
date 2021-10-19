@@ -2,7 +2,7 @@ import torch
 from torchvision import transforms
 
 from src.dtypes import ImagesInner
-from config import MODEL_INPUT
+from config import MODEL_INPUT, IMAGE_ERR_CODE_OK
 
 
 class Predictor:
@@ -26,10 +26,11 @@ class Predictor:
         """
 
         # Pop invalid images
-        images_err = [images.pop(images.index(image)) for image in images if image.err is not None]
+        images_err = [image for image in images if image.err.code != IMAGE_ERR_CODE_OK]
+        images_ok = [image for image in images if image.err.code == IMAGE_ERR_CODE_OK]
 
         # Get images tensor
-        tensor = cls.__get_tensor(images)
+        tensor = cls.__get_tensor(images_ok)
 
         # Throw tensor to GPU RAM
         if torch.cuda.is_available():
@@ -46,10 +47,10 @@ class Predictor:
 
         # Update images
         for k, prediction in enumerate(predictions):
-            images[k].prediction = prediction
+            images_ok[k].prediction = list(prediction)
 
         # Concat images lists
-        images = images + images_err
+        images = images_ok + images_err
 
         return images
 

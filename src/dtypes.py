@@ -1,8 +1,9 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 from PIL.Image import Image as ImagePIL
+from PIL import Image as ImagePILModule
 from pydantic import BaseModel
 from pydantic import HttpUrl
 
@@ -27,8 +28,8 @@ class Image(BaseModel):
 
 
 class ImagePredicted(Image):
-    prediction: Optional[torch.Tensor] = None
-    err: Optional[ImageError] = None
+    prediction: Union[torch.Tensor, list[float]] = None
+    err: ImageError
 
     class Config:
         arbitrary_types_allowed = True

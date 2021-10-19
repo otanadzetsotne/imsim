@@ -21,9 +21,9 @@ class TestApp:
 
     @staticmethod
     def is_response_image_predicted(image):
-        vector = image.get('vec')
-        assert vector
-        assert len(vector) > 0
+        prediction = image.get('prediction')
+        assert prediction
+        assert len(prediction) > 0
 
     @staticmethod
     def check_response(response):

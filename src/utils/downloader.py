@@ -7,13 +7,14 @@ from requests.models import HTTPError
 from config import (
     IMAGE_PIL_FORMAT,
     IMAGE_CONTENT_TYPES,
+    IMAGE_ERR_CODE_OK,
 )
 from src.dtypes import (
     ImageIn,
     ImagesIn,
     ImageInner,
     ImagesInner,
-    ImagePIL,
+    ImagePILModule,
     ImageError,
 )
 from src.exceptions import BadUrlError
@@ -30,8 +31,10 @@ class Downloader:
         :return: inner representation of image
         """
 
-        image_inner = ImageInner(**dict(image))
-        image_inner.err = ImageError(code=200)
+        image_inner = ImageInner(
+            **dict(image),
+            err=ImageError(code=IMAGE_ERR_CODE_OK),
+        )
 
         try:
             # Make request
@@ -47,7 +50,7 @@ class Downloader:
             # Create PIL
             image_response = response.content
             image_bytes = io.BytesIO(image_response)
-            image_pil = ImagePIL.open(image_bytes)
+            image_pil = ImagePILModule.open(image_bytes)
             image_pil = image_pil.convert(IMAGE_PIL_FORMAT)
 
             # Update image object

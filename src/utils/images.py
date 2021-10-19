@@ -1,4 +1,5 @@
 from src.dtypes import ImagesInner
+from config import IMAGE_ERR_CODE_OK
 
 
 class ImagesHelper:
@@ -12,7 +13,7 @@ class ImagesHelper:
         :return: images without errors
         """
 
-        return [image for image in images if image.err is None]
+        return [image for image in images if image.err.code == IMAGE_ERR_CODE_OK]
 
     @staticmethod
     def has_correct(
@@ -24,4 +25,4 @@ class ImagesHelper:
         :return: bool
         """
 
-        return any([image.err is None for image in images])
+        return any([image.err.code == IMAGE_ERR_CODE_OK for image in images])

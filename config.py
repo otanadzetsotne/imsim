@@ -45,6 +45,9 @@ IMAGE_CONTENT_TYPES = [
     'image/svg+xml',
 ]
 
+# Data Types configs
+IMAGE_ERR_CODE_OK = 200
+
 
 if __name__ == '__main__':
     def directory_exists(path: str):

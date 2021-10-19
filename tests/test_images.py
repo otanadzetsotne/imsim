@@ -9,6 +9,12 @@ class TestImagesHelper:
         assert ProxyImages.filter_correct(mock.images_err) == []
         assert ProxyImages.filter_correct([]) == []
 
+    def test_filter_error(self):
+        assert ProxyImages.filter_error(mock.images_mix) == mock.images_err
+        assert ProxyImages.filter_error(mock.images_correct) == []
+        assert ProxyImages.filter_error(mock.images_err) == mock.images_err
+        assert ProxyImages.filter_error([]) == []
+
     def test_has_correct(self):
         assert ProxyImages.has_correct(mock.images_mix) is True
         assert ProxyImages.has_correct(mock.images_correct) is True

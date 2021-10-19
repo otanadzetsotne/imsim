@@ -25,12 +25,8 @@ class Predictor:
         :return: predicted images
         """
 
-        # Pop invalid images
-        images_err = [image for image in images if image.err.code != IMAGE_ERR_CODE_OK]
-        images_ok = [image for image in images if image.err.code == IMAGE_ERR_CODE_OK]
-
         # Get images tensor
-        tensor = cls.__get_tensor(images_ok)
+        tensor = cls.__get_tensor(images)
 
         # Throw tensor to GPU RAM
         if torch.cuda.is_available():
@@ -39,7 +35,6 @@ class Predictor:
         # Predict tensors
         with torch.no_grad():
             predictions = model(tensor)
-            del tensor
 
         # Throw predictions to cpu
         if torch.cuda.is_available():
@@ -47,10 +42,7 @@ class Predictor:
 
         # Update images
         for k, prediction in enumerate(predictions):
-            images_ok[k].prediction = list(prediction)
-
-        # Concat images lists
-        images = images_ok + images_err
+            images[k].prediction = list(prediction)
 
         return images
 

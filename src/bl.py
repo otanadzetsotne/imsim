@@ -22,13 +22,13 @@ class BusinessLogic:
         """
 
         images = cls.proxies.downloader.map(request.images)
-        images = cls.predict(request.model, images)
-        images = cls.images_inner_to_out(images)
+        images = cls.__predict(request.model, images)
+        images = cls.__images_inner_to_out(images)
 
         return PredictionOutMulti(model=request.model, images=images)
 
     @staticmethod
-    def images_inner_to_out(
+    def __images_inner_to_out(
             images: ImagesInner,
     ) -> ImagesOut:
         """
@@ -40,7 +40,7 @@ class BusinessLogic:
         return [ImageOut(**dict(image)) for image in images]
 
     @classmethod
-    def predict(
+    def __predict(
             cls,
             model: Model,
             images: ImagesInner,
@@ -53,7 +53,17 @@ class BusinessLogic:
         """
 
         if cls.proxies.images.has_correct(images):
+            # Load model
             model = cls.proxies.collector.collect(model)
-            images = cls.proxies.predictor.predict(model, images)
+
+            # Split images
+            images_err = cls.proxies.images.filter_error(images)
+            images_correct = cls.proxies.images.filter_correct(images)
+
+            # Predict correct ones
+            images_correct = cls.proxies.predictor.predict(model, images_correct)
+
+            # Merge images
+            images = images_correct + images_err
 
         return images

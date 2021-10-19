@@ -16,6 +16,18 @@ class ProxyImages:
         return ImagesHelper.filter_correct(images)
 
     @staticmethod
+    def filter_error(
+            images: ImagesInner,
+    ) -> ImagesInner:
+        """
+        Filter images and return just with errors
+        :param images: ImagesInner
+        :return: ImagesInner
+        """
+
+        return ImagesHelper.filter_error(images)
+
+    @staticmethod
     def has_correct(
             images: ImagesInner,
     ) -> bool:

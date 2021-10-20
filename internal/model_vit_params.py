@@ -1,11 +1,14 @@
-import fire
 from pytorch_pretrained_vit import ViT
 
 
+MODEL_VIT_TYPE = 'B_16'
+MODEL_INPUT = 480
+
+
 def model_vit_sizes(
-        name: str,
-        image_size: int,
-        pretrained: bool,
+        image_size: int = MODEL_INPUT,
+        name: str = MODEL_VIT_TYPE,
+        pretrained: bool = True,
 ):
     """
     Print models parameters
@@ -22,7 +25,3 @@ def model_vit_sizes(
 
     print(f'ViT model {name} with input size {image_size}')
     print(f'Model parameters: {sum([param.nelement() for param in model.parameters()])}')
-
-
-if __name__ == '__main__':
-    fire.Fire()

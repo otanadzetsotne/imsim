@@ -1,6 +1,5 @@
 import pickle
 
-import fire
 import numpy as np
 import torch
 from torch import nn
@@ -155,7 +154,3 @@ def create_nn(
         current_epoch += 1
         if current_epoch >= epochs_mas:
             break
-
-
-if __name__ == '__main__':
-    fire.Fire()

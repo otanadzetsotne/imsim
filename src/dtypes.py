@@ -12,6 +12,7 @@ from pydantic import HttpUrl
 
 
 class Model(Enum):
+    vit_tiny = 'vit_tiny'
     vit = 'vit'
 
 

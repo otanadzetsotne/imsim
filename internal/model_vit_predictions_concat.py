@@ -1,7 +1,6 @@
 import os
 import pickle
 
-import fire
 import numpy as np
 from collections import deque
 
@@ -34,7 +33,3 @@ def concat(
     with open(path_predictions_concatenated, 'wb') as f:
         pickle.dump(predictions_concat, f)
     print(f'Saved predictions np.array ({path_predictions_concatenated})')
-
-
-if __name__ == '__main__':
-    fire.Fire()

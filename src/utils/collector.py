@@ -3,12 +3,12 @@ import torch
 from src.facades.models import Models
 from src.dtypes import Model
 from config import (
-    MODEL_VIT_NAME,
-    MODEL_VIT_ENCODER_NAME,
+    MODEL_NAME_VIT,
 )
 
 
-class _Identity(torch.nn.Module):
+# TODO: move that to separate model
+class Identity(torch.nn.Module):
     """
     Linear layer for torch model
     """
@@ -19,6 +19,18 @@ class _Identity(torch.nn.Module):
     @staticmethod
     def forward(x):
         return x
+
+
+class CollectorDecorators:
+    @staticmethod
+    def classification_to_identity(func):
+        def inner(*args, **kwargs):
+            model = func(*args, **kwargs)
+            model.fc = Identity()
+
+            return model
+
+        return inner
 
 
 class Collector:
@@ -34,10 +46,12 @@ class Collector:
         """
 
         if model_type == Model.vit:
-            return cls.__vit_collect()
+            return cls.collect_vit()
+        if model_type == Model.vit_tiny:
+            return cls.collect_vit_tiny()
 
     @classmethod
-    def __vit_collect(
+    def collect_vit(
             cls,
     ) -> torch.nn.Module:
         """
@@ -46,31 +60,41 @@ class Collector:
         """
 
         model = torch.nn.Sequential()
-        model.add_module(MODEL_VIT_NAME, cls.__get_vit())
-        # model.add_module(MODEL_VIT_ENCODER_NAME, cls.__get_vit_encoder())
+        model.add_module(MODEL_NAME_VIT, cls.get_vit())
+        # model.add_module(MODEL_VIT_ENCODER_NAME, cls.get_vit_encoder())
 
         return model
 
     @classmethod
-    def __get_vit(
+    def collect_vit_tiny(
             cls,
     ) -> torch.nn.Module:
+
+        model = torch.nn.Sequential()
+        model.add_module(MODEL_NAME_VIT, cls.get_vit_tiny())
+
+        return model
+
+    @staticmethod
+    @CollectorDecorators.classification_to_identity
+    def get_vit() -> torch.nn.Module:
         """
-        Get base ViT model
-        :return: model
+        Load base ViT model
         """
 
-        # Get ViT model
-        model_vit = Models.vit.get()
-        # Drop classification layer
-        model_vit.fc = _Identity()
+        return Models.vit.get()
 
-        return model_vit
+    @staticmethod
+    @CollectorDecorators.classification_to_identity
+    def get_vit_tiny() -> torch.nn.Module:
+        """
+        Load base ViT model with tiny input
+        """
 
-    @classmethod
-    def __get_vit_encoder(
-            cls,
-    ) -> torch.nn.Module:
+        return Models.vit_tiny.get()
+
+    @staticmethod
+    def get_vit_encoder() -> torch.nn.Module:
         """
         Get ViT model encoder
         :return: encoder model

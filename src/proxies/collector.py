@@ -11,8 +11,6 @@ class ProxyCollector:
     ) -> torch.nn.Module:
         """
         Create model objects
-        :param model_type: Model
-        :return: torch.nn.Module
         """
 
         return Collector.collect(model_type)

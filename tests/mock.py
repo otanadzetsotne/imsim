@@ -7,6 +7,8 @@ from src.dtypes import ImageInner
 from src.dtypes import ImageError
 from config import IMAGE_ERR_CODE_OK
 
+image_data_url_bad = 'https://vk.com'
+image_data_url_ok = 'https://cdn.vox-cdn.com/thumbor/6ofCV2k-SeKBJytacICi1mrzvL8=/0x66:1600x1133/1200x800/filters:focal(0x66:1600x1133)/cdn.vox-cdn.com/uploads/chorus_image/image/37575328/hello_maybe_not_kitty.0.0.jpeg'
 
 image_data_url = 'https://google.com/image.jpg'
 image_data_pil = ImagePIL.new('RGB', (1, 1))

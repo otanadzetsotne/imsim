@@ -2,7 +2,7 @@ import torch
 from torchvision import transforms
 
 from src.dtypes import ImagesInner
-from config import MODEL_INPUT, IMAGE_ERR_CODE_OK
+from config import MODEL_INPUT
 
 
 class Predictor:

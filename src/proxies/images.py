@@ -9,8 +9,6 @@ class ProxyImages:
     ) -> ImagesInner:
         """
         Filter images and return just corrects
-        :param images: ImagesInner
-        :return: ImagesInner
         """
 
         return ImagesHelper.filter_correct(images)
@@ -21,8 +19,6 @@ class ProxyImages:
     ) -> ImagesInner:
         """
         Filter images and return just with errors
-        :param images: ImagesInner
-        :return: ImagesInner
         """
 
         return ImagesHelper.filter_error(images)
@@ -33,8 +29,6 @@ class ProxyImages:
     ) -> bool:
         """
         Check ImagesInner object
-        :param images: ImagesInner
-        :return: bool
         """
 
         return ImagesHelper.has_correct(images)

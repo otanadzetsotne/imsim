@@ -1,4 +1,5 @@
 import io
+from itertools import repeat
 from multiprocessing import Pool
 
 import requests
@@ -8,6 +9,7 @@ from config import (
     IMAGE_PIL_FORMAT,
     IMAGE_CONTENT_TYPES,
     IMAGE_ERR_CODE_OK,
+    IMAGE_PIL_RESAMPLE,
 )
 from src.dtypes import (
     ImageIn,
@@ -16,6 +18,7 @@ from src.dtypes import (
     ImagesInner,
     ImagePILModule,
     ImageError,
+    ModelInput,
 )
 from src.exceptions import BadUrlError
 
@@ -23,13 +26,18 @@ from src.exceptions import BadUrlError
 class Downloader:
     @staticmethod
     def one(
+            model_input: ModelInput,
             image: ImageIn,
     ) -> ImageInner:
         """
         Download image
+
+        :param model_input: model input size
         :param image: request image
         :return: inner representation of image
         """
+
+        image_size = model_input.value
 
         image_inner = ImageInner(
             **dict(image),
@@ -51,6 +59,7 @@ class Downloader:
             image_response = response.content
             image_bytes = io.BytesIO(image_response)
             image_pil = ImagePILModule.open(image_bytes)
+            image_pil = image_pil.resize((image_size, image_size), IMAGE_PIL_RESAMPLE)
             image_pil = image_pil.convert(IMAGE_PIL_FORMAT)
 
             # Update image object
@@ -71,17 +80,37 @@ class Downloader:
         return image_inner
 
     @classmethod
+    def one_proxy(
+            cls,
+            args,
+    ):
+        """
+        Proxy function for Pool().map
+        Unpacks multiple arguments into cls.one() function
+
+        :param args: Iterable[ModelType, ImageInner]
+        """
+
+        return cls.one(*args)
+
+    @classmethod
     def map(
             cls,
+            model_input: ModelInput,
             images: ImagesIn,
     ) -> ImagesInner:
         """
         Images parallel download
+
+        :param model_input: model input size
         :param images: request images
         :return: inner representation of images
         """
 
         with Pool() as pool:
-            images = pool.map(cls.one, images)
+            images = pool.map(
+                cls.one_proxy,
+                zip(repeat(model_input), images),
+            )
 
         return images

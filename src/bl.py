@@ -21,7 +21,7 @@ class BusinessLogic:
         Predict images
         """
 
-        images = cls.proxies.downloader.map(request.images)
+        images = cls.proxies.downloader.map(request.model_input, request.images)
         images = cls.__predict(request.model, images)
         images = cls.__images_inner_to_out(images)
 

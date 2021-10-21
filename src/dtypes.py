@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional, Union
 
-import torch
+from torch import Tensor
 from PIL.Image import Image as ImagePIL
 from PIL import Image as ImagePILModule
 from pydantic import BaseModel
@@ -12,8 +12,12 @@ from pydantic import HttpUrl
 
 
 class Model(Enum):
-    vit_tiny = 'vit_tiny'
-    vit = 'vit'
+    vit: str = 'vit'
+
+
+class ModelInput(Enum):
+    s: int = 192
+    m: int = 480
 
 
 # Image pydantic models
@@ -29,7 +33,7 @@ class Image(BaseModel):
 
 
 class ImagePredicted(Image):
-    prediction: Union[torch.Tensor, list[float]] = None
+    prediction: Union[Tensor, list[float]] = None
     err: ImageError
 
     class Config:
@@ -58,6 +62,7 @@ ImagesOut = list[ImageOut]
 
 class Prediction(BaseModel):
     model: Model
+    model_input = ModelInput
 
 
 class PredictionInMulti(Prediction):

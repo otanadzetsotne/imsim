@@ -1,4 +1,6 @@
 import os
+from PIL import Image
+
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -44,6 +46,7 @@ REQUIRED_DIRECTORIES = [
 # Downloader configs
 
 IMAGE_PIL_FORMAT = 'RGB'
+IMAGE_PIL_RESAMPLE = Image.BICUBIC
 IMAGE_CONTENT_TYPES = [
     'image/gif',
     'image/jpeg',

@@ -1,7 +1,6 @@
-from copy import deepcopy
-
 import os
 import sys
+from copy import deepcopy
 
 script_path = os.path.realpath(os.path.dirname(__name__))
 os.chdir(script_path)

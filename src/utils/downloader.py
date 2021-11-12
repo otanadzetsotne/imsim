@@ -1,43 +1,35 @@
+# standard
 import io
-from itertools import repeat
 from multiprocessing import Pool
-
+# imported
 import requests
 from requests.models import HTTPError
-
-from config import (
-    IMAGE_PIL_FORMAT,
-    IMAGE_CONTENT_TYPES,
-    IMAGE_ERR_CODE_OK,
-    IMAGE_PIL_RESAMPLE,
-)
-from src.dtypes import (
-    ImageIn,
-    ImagesIn,
-    ImageInner,
-    ImagesInner,
-    ImagePILModule,
-    ImageError,
-    ModelInput,
-)
+# local
+from config import IMAGE_SIZE
+from config import IMAGE_PIL_FORMAT
+from config import IMAGE_CONTENT_TYPES
+from config import IMAGE_ERR_CODE_OK
+from config import IMAGE_PIL_RESAMPLE
+from src.dtypes import ImageIn
+from src.dtypes import ImagesIn
+from src.dtypes import ImageInner
+from src.dtypes import ImagesInner
+from src.dtypes import ImagePILModule
+from src.dtypes import ImageError
 from src.exceptions import BadUrlError
 
 
 class Downloader:
     @staticmethod
     def one(
-            model_input: ModelInput,
             image: ImageIn,
     ) -> ImageInner:
         """
         Download image
 
-        :param model_input: model input size
         :param image: request image
         :return: inner representation of image
         """
-
-        image_size = model_input.value
 
         image_inner = ImageInner(
             **dict(image),
@@ -59,7 +51,10 @@ class Downloader:
             image_response = response.content
             image_bytes = io.BytesIO(image_response)
             image_pil = ImagePILModule.open(image_bytes)
-            image_pil = image_pil.resize((image_size, image_size), IMAGE_PIL_RESAMPLE)
+            image_pil = image_pil.resize(
+                (IMAGE_SIZE, IMAGE_SIZE),
+                IMAGE_PIL_RESAMPLE,
+            )
             image_pil = image_pil.convert(IMAGE_PIL_FORMAT)
 
             # Update image object
@@ -96,13 +91,11 @@ class Downloader:
     @classmethod
     def map(
             cls,
-            model_input: ModelInput,
             images: ImagesIn,
     ) -> ImagesInner:
         """
         Images parallel download
 
-        :param model_input: model input size
         :param images: request images
         :return: inner representation of images
         """
@@ -110,7 +103,7 @@ class Downloader:
         with Pool() as pool:
             images = pool.map(
                 cls.one_proxy,
-                zip(repeat(model_input), images),
+                zip(images),
             )
 
         return images

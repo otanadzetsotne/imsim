@@ -1,8 +1,7 @@
+# local
 from src.exceptions import NeuralNetworkModelNotFoundError
 from src.models.abstract import ModelLoader
-from config import (
-    MODEL_VIT_ENCODER_PATH,
-)
+from config import MODEL_VIT_ENCODER_PATH
 
 
 class ModelLoaderViTEncoder(ModelLoader):

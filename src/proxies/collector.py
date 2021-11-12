@@ -1,4 +1,6 @@
+# imported
 import torch
+# local
 from src.utils.collector import Collector
 from src.dtypes import Model
 

@@ -2,12 +2,13 @@ import torch
 from torchvision import transforms
 
 from src.dtypes import ImagesInner
-from config import MODEL_INPUT
+from config import IMAGE_SIZE
 
 
 class Predictor:
+    # TODO: изображения итак необходимого размера, нужно разобраться нужен ли этот слой
     transformer = transforms.Compose([
-        transforms.Resize((MODEL_INPUT, MODEL_INPUT)),
+        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
         transforms.ToTensor(),
         transforms.Normalize(0.5, 0.5),
     ])
@@ -29,16 +30,16 @@ class Predictor:
         tensor = cls.__get_tensor(images)
 
         # Throw tensor to GPU RAM
-        if torch.cuda.is_available():
-            tensor = tensor.cuda()
+        # if torch.cuda.is_available():
+        #     tensor = tensor.cuda()
 
         # Predict tensors
         with torch.no_grad():
             predictions = model(tensor)
 
         # Throw predictions to cpu
-        if torch.cuda.is_available():
-            predictions = predictions.cpu()
+        # if torch.cuda.is_available():
+        #     predictions = predictions.cpu()
 
         # Update images
         for k, prediction in enumerate(predictions):

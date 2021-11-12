@@ -1,11 +1,12 @@
+# standard
 from enum import Enum
 from typing import Optional, Union
-
+# imported
 from torch import Tensor
-from PIL.Image import Image as ImagePIL
-from PIL import Image as ImagePILModule
 from pydantic import BaseModel
 from pydantic import HttpUrl
+from PIL.Image import Image as ImagePIL
+from PIL import Image as ImagePILModule
 
 
 # Neural
@@ -13,11 +14,7 @@ from pydantic import HttpUrl
 
 class Model(Enum):
     vit: str = 'vit'
-
-
-class ModelInput(Enum):
-    s: int = 192
-    m: int = 480
+    test: str = 'test'
 
 
 # Image pydantic models
@@ -62,7 +59,6 @@ ImagesOut = list[ImageOut]
 
 class Prediction(BaseModel):
     model: Model
-    model_input = ModelInput
 
 
 class PredictionInMulti(Prediction):

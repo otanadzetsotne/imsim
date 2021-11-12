@@ -1,22 +1,64 @@
+from copy import deepcopy
+
+import numpy as np
+from PIL import Image as ImagePIL
+from torch import Tensor
+from src.dtypes import ImageInner
+from src.dtypes import ImageError
+from config import IMAGE_ERR_CODE_OK
+
 from src.facades.proxies import ProxyImages
-from tests import mock
+
+
+image_data_url_bad = 'https://vk.com'
+image_data_url_ok = 'https://cdn.vox-cdn.com/thumbor/6ofCV2k-SeKBJytacICi1mrzvL8=/0x66:1600x1133/1200x800/filters:focal(0x66:1600x1133)/cdn.vox-cdn.com/uploads/chorus_image/image/37575328/hello_maybe_not_kitty.0.0.jpeg'
+
+image_data_url = 'https://google.com/image.jpg'
+image_data_pil = ImagePIL.new('RGB', (1, 1))
+image_data_err_ok = ImageError(code=IMAGE_ERR_CODE_OK)
+image_data_err_500 = ImageError(code=500)
+image_data_prediction = Tensor(np.ones(768))
+
+
+image_err_500 = ImageInner(
+    url=image_data_url,
+    err=image_data_err_500,
+    pil=None,
+    prediction=None,
+)
+image_correct = ImageInner(
+    url=image_data_url,
+    err=image_data_err_ok,
+    pil=image_data_pil,
+    prediction=None,
+)
+image_predicted = ImageInner(
+    url=image_data_url,
+    err=image_data_err_ok,
+    pil=image_data_pil,
+    prediction=image_data_prediction,
+)
+
+images_correct = [deepcopy(image_correct) for _ in range(3)]
+images_err = [deepcopy(image_err_500) for _ in range(3)]
+images_mix = deepcopy(images_correct) + deepcopy(images_err)
 
 
 class TestImagesHelper:
     def test_filter_correct(self):
-        assert ProxyImages.filter_correct(mock.images_mix) == mock.images_correct
-        assert ProxyImages.filter_correct(mock.images_correct) == mock.images_correct
-        assert ProxyImages.filter_correct(mock.images_err) == []
+        assert ProxyImages.filter_correct(images_mix) == images_correct
+        assert ProxyImages.filter_correct(images_correct) == images_correct
+        assert ProxyImages.filter_correct(images_err) == []
         assert ProxyImages.filter_correct([]) == []
 
     def test_filter_error(self):
-        assert ProxyImages.filter_error(mock.images_mix) == mock.images_err
-        assert ProxyImages.filter_error(mock.images_correct) == []
-        assert ProxyImages.filter_error(mock.images_err) == mock.images_err
+        assert ProxyImages.filter_error(images_mix) == images_err
+        assert ProxyImages.filter_error(images_correct) == []
+        assert ProxyImages.filter_error(images_err) == images_err
         assert ProxyImages.filter_error([]) == []
 
     def test_has_correct(self):
-        assert ProxyImages.has_correct(mock.images_mix) is True
-        assert ProxyImages.has_correct(mock.images_correct) is True
-        assert ProxyImages.has_correct(mock.images_err) is False
+        assert ProxyImages.has_correct(images_mix) is True
+        assert ProxyImages.has_correct(images_correct) is True
+        assert ProxyImages.has_correct(images_err) is False
         assert ProxyImages.has_correct([]) is False

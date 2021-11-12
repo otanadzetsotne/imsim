@@ -1,12 +1,11 @@
+# local
 from src.facades.proxies import Proxies
-from src.dtypes import (
-    PredictionInMulti,
-    PredictionOutMulti,
-    ImagesInner,
-    ImagesOut,
-    ImageOut,
-    Model,
-)
+from src.dtypes import PredictionInMulti
+from src.dtypes import PredictionOutMulti
+from src.dtypes import ImagesInner
+from src.dtypes import ImagesOut
+from src.dtypes import ImageOut
+from src.dtypes import Model
 
 
 class BusinessLogic:
@@ -21,7 +20,7 @@ class BusinessLogic:
         Predict images
         """
 
-        images = cls.proxies.downloader.map(request.model_input, request.images)
+        images = cls.proxies.downloader.map(request.images)
         images = cls.__predict(request.model, images)
         images = cls.__images_inner_to_out(images)
 

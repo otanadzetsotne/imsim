@@ -1,10 +1,21 @@
+# imported
 import torch
-
+# local
 from src.facades.models import Models
 from src.dtypes import Model
-from config import (
-    MODEL_NAME_VIT,
-)
+from config import MODEL_NAME_VIT
+
+
+class CollectorDecorators:
+    @staticmethod
+    def vit_classification_to_identity(func):
+        def inner(*args, **kwargs):
+            model = func(*args, **kwargs)
+            model.fc = Identity()
+
+            return model
+
+        return inner
 
 
 # TODO: move that to separate model
@@ -21,18 +32,6 @@ class Identity(torch.nn.Module):
         return x
 
 
-class CollectorDecorators:
-    @staticmethod
-    def classification_to_identity(func):
-        def inner(*args, **kwargs):
-            model = func(*args, **kwargs)
-            model.fc = Identity()
-
-            return model
-
-        return inner
-
-
 class Collector:
     @classmethod
     def collect(
@@ -47,13 +46,9 @@ class Collector:
 
         if model_type == Model.vit:
             return cls.collect_vit()
-        if model_type == Model.vit_tiny:
-            return cls.collect_vit_tiny()
 
     @classmethod
-    def collect_vit(
-            cls,
-    ) -> torch.nn.Module:
+    def collect_vit(cls) -> torch.nn.Module:
         """
         Get ViT model
         :return: torch.nn.Module
@@ -65,33 +60,14 @@ class Collector:
 
         return model
 
-    @classmethod
-    def collect_vit_tiny(
-            cls,
-    ) -> torch.nn.Module:
-
-        model = torch.nn.Sequential()
-        model.add_module(MODEL_NAME_VIT, cls.get_vit_tiny())
-
-        return model
-
     @staticmethod
-    @CollectorDecorators.classification_to_identity
+    @CollectorDecorators.vit_classification_to_identity
     def get_vit() -> torch.nn.Module:
         """
         Load base ViT model
         """
 
         return Models.vit.get()
-
-    @staticmethod
-    @CollectorDecorators.classification_to_identity
-    def get_vit_tiny() -> torch.nn.Module:
-        """
-        Load base ViT model with tiny input
-        """
-
-        return Models.vit_tiny.get()
 
     @staticmethod
     def get_vit_encoder() -> torch.nn.Module:

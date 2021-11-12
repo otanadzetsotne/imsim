@@ -1,3 +1,4 @@
+# local
 from src.proxies.downloader import ProxyDownloader
 from src.proxies.predictor import ProxyPredictor
 from src.proxies.collector import ProxyCollector

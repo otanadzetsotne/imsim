@@ -9,6 +9,25 @@ from PIL.Image import Image as ImagePIL
 from PIL import Image as ImagePILModule
 
 
+class User(BaseModel):
+    username: str
+    email: Optional[str] = None
+    disabled: Optional[bool] = None
+
+
+class UserDB(User):
+    password_hash: str
+
+
+class Token(BaseModel):
+    access: str
+    type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+
+
 # Neural
 
 

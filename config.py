@@ -1,5 +1,13 @@
 import os
+from datetime import timedelta
 from PIL import Image
+
+
+# Generate with openssl rand -hex 32
+SECRET_KEY = '57ddde524dbf423ea7d1c3bba3dc6a24bbca3dbc4e0a0c0d08d9b729f2db8779'
+ACCESS_TOKEN_ALGORITHM = 'HS256'
+ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
+ACCESS_TOKEN_TYPE = 'bearer'
 
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))

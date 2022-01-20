@@ -35,7 +35,7 @@ oauth2_scheme = OAuth2PasswordBearer(
 pwd_context = PasswordContext()
 
 
-async def get_current_user(
+async def user_token_valid(
         token: str = Depends(oauth2_scheme),
 ) -> User:
     """
@@ -76,24 +76,24 @@ async def get_current_user(
     return user
 
 
-async def get_current_user_active(
-        current_user: User = Depends(get_current_user),
+async def user_active(
+        user: User = Depends(user_token_valid),
 ) -> User:
     """
     Check if current user is activated
-    :param current_user: User object
+    :param user: User object
     """
 
-    if current_user.disabled:
+    if user.disabled:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail='Inactive user',
         )
 
-    return current_user
+    return user
 
 
-def user_authenticate(
+async def user_authenticate(
         form_data: OAuth2PasswordRequestForm = Depends(),
 ) -> User:
     """
@@ -116,3 +116,8 @@ def user_authenticate(
         raise exception
 
     return user
+
+
+# TODO: We need to create whole user requirements dependency hierarchy:
+#  + Roles
+#  + Dependency classes

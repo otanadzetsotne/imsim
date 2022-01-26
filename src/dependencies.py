@@ -1,11 +1,14 @@
-from fastapi import Depends, HTTPException, status
+from functools import cache
+
 from jose import JWTError, jwt
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from src.security.password import PasswordContext
 from src.dtypes import User
 from src.dtypes import UserDB
 from src.dtypes import TokenData
+from config import Settings
 from config import SECRET_KEY
 from config import ACCESS_TOKEN_ALGORITHM
 
@@ -35,12 +38,16 @@ oauth2_scheme = OAuth2PasswordBearer(
 pwd_context = PasswordContext()
 
 
+@cache
+def get_settings() -> Settings:
+    return Settings()
+
+
 async def user_token_valid(
         token: str = Depends(oauth2_scheme),
 ) -> User:
     """
     Get current user from jwt token
-    :param token: string of token
     """
 
     credentials_exception = HTTPException(

@@ -1,16 +1,30 @@
-from functools import cache
-
 from jose import JWTError, jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Depends
+from fastapi.security import (
+    OAuth2PasswordBearer,
+    OAuth2PasswordRequestForm,
+)
 
 from src.security.password import PasswordContext
-from src.dtypes import User
-from src.dtypes import UserDB
-from src.dtypes import TokenData
-from config import Settings
-from config import SECRET_KEY
-from config import ACCESS_TOKEN_ALGORITHM
+from src.dependencies.settings import (
+    Settings,
+    get_settings,
+)
+from src.dtypes import (
+    User,
+    UserDB,
+    TokenData,
+)
+from src.exceptions import (
+    InactiveUserError,
+    UsernameOrPasswordError,
+    CredentialsError,
+)
+
+
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl='token',
+)
 
 
 # TODO: удалить
@@ -26,59 +40,45 @@ fake_users_db = {
 
 
 # TODO: унести
-def get_user(username: str):
+def get_user(
+        username: str,
+) -> UserDB:
     if username in fake_users_db:
         user_dict = fake_users_db[username]
         return UserDB(**user_dict)
 
 
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl='token',
-)
-pwd_context = PasswordContext()
-
-
-@cache
-def get_settings() -> Settings:
-    return Settings()
-
-
 async def user_token_valid(
         token: str = Depends(oauth2_scheme),
+        settings: Settings = Depends(get_settings),
 ) -> User:
     """
     Get current user from jwt token
     """
 
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail='Could not validate credentials',
-        headers={'WWW-Authenticate': 'Bearer'},
-    )
-
     try:
         # Decode data from token
         payload = jwt.decode(
             token=token,
-            key=SECRET_KEY,
-            algorithms=[ACCESS_TOKEN_ALGORITHM],
+            key=settings.secret.key_token,
+            algorithms=[settings.token.algorithm],
         )
         # Store username in token subject
         username: str = payload.get('sub')
 
         if username is None:
-            raise credentials_exception
+            raise CredentialsError
 
         token_data = TokenData(username=username)
 
     except JWTError:
-        raise credentials_exception
+        raise CredentialsError
 
     # Get user entity
     user = get_user(username=token_data.username)
 
     if not user:
-        raise credentials_exception
+        raise CredentialsError
 
     return user
 
@@ -92,39 +92,25 @@ async def user_active(
     """
 
     if user.disabled:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail='Inactive user',
-        )
+        raise InactiveUserError
 
     return user
 
 
 async def user_authenticate(
         form_data: OAuth2PasswordRequestForm = Depends(),
+        pwd_context: PasswordContext = Depends(),
 ) -> User:
     """
     Check if user credentials are correct
-    :param form_data: OAuth2PasswordRequestForm
     """
-
-    exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail='Incorrect username or password',
-        headers={'WWW-Authenticate': 'Bearer'},
-    )
 
     user = get_user(form_data.username)
 
     if not user:
-        raise exception
+        raise UsernameOrPasswordError
 
     if not pwd_context.verify(form_data.password, user.password_hash):
-        raise exception
+        raise UsernameOrPasswordError
 
     return user
-
-
-# TODO: We need to create whole user requirements dependency hierarchy:
-#  + Roles
-#  + Dependency classes

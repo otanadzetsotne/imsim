@@ -4,8 +4,8 @@ from config import Settings
 from src.dtypes import PredictionInMulti, User
 from src.bl import BusinessLogic
 from src.utils.token import create_access_token
-from src.dependencies import (
-    get_settings,
+from src.dependencies.settings import get_settings
+from src.dependencies.oauth2 import (
     user_active,
     user_authenticate,
 )
